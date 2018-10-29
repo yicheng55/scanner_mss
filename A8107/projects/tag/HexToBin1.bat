@@ -1,0 +1,1 @@
+hex2bin -s 0 Objects/Master_M8107.hex
