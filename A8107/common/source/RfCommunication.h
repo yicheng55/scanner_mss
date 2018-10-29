@@ -131,8 +131,6 @@
 
 
 #define RF_CMD_SCANNER_CONFIRMED_NAK            0x89    // Scanner Confirmed Ack
-
-
 //#define RF_CMD_FORCE_UPPER_HOST                 0x85    // Repater Pairing
 
 
@@ -288,7 +286,8 @@
 //==============================================================================
 #pragma pack(1)
 
-typedef struct _ESL_COMMON_HEADER {
+typedef struct _ESL_COMMON_HEADER 
+{
     //--- Common Header ---
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
@@ -297,7 +296,8 @@ typedef struct _ESL_COMMON_HEADER {
     uint8_t ExtensionData[1];                   // Extension Data
 } ESL_COMMON_HEADER, *PESL_COMMON_HEADER;
 
-typedef struct {
+typedef struct 
+{
     uint8_t      BeaconSeq;
     uint8_t      BeaconType;
     uint8_t      Action;
@@ -307,34 +307,39 @@ typedef struct {
     uint8_t      RepeaterID[2];
 } SYNC_BEACON, *P_SYNC_BEACON, *PSYNC_BEACON;
 
-typedef struct _ESL_EXTENSION_PAIRING_PACKET {
+typedef struct _ESL_EXTENSION_PAIRING_PACKET 
+{
     uint8_t nLength;                            // The size of the extension structure
     uint8_t nFormat;                            // Format
     uint8_t byProduct[MAX_BARCODE_PRODUCT];     // Commodity, goods
     uint8_t byDevice[MAX_BARCODE_FACTORY];      // Tag
 } ESL_EXTENSION_PAIRING, *PESL_EXTENSION_PAIRING;
 
-typedef struct _ESL_EXTENSION_FACTORY_PACKET {
+typedef struct _ESL_EXTENSION_FACTORY_PACKET 
+{
     uint8_t nLength;                            // The size of the extension structure
     uint8_t nFormat;                            // Format
     uint8_t byCommand[MAX_BARCODE_FACTORY];     // Command ID
     uint8_t byReserved[1];                      // Reserved
 } ESL_EXTENSION_FACTORY, *PESL_EXTENSION_FACTORY;
 
-typedef struct _ESL_EXTENSION_BARCODE_PACKET {
+typedef struct _ESL_EXTENSION_BARCODE_PACKET 
+{
     uint8_t nLength;                            // The size of the extension structure
     uint8_t nFormat;                            // Format
     uint8_t byProduct[MAX_BARCODE_PRODUCT];     // Commodity, goods barcode
 } ESL_EXTENSION_BARCODE, *PESL_EXTENSION_BARCODE;
 
 
-typedef struct _ESL_EXTENSION_STATUS_PACKET {
+typedef struct _ESL_EXTENSION_STATUS_PACKET 
+{
     uint8_t nLength;                            // The size of the extension structure
     uint8_t nFormat;                            // Format
     uint16_t uiStatus;
 } ESL_EXTENSION_STATUS, *PESL_EXTENSION_STATUS;
 
-typedef struct _ESL_EXTENSION_RSSI {
+typedef struct _ESL_EXTENSION_RSSI 
+{
     uint8_t nLength;                            // The size of the extension structure
     uint8_t nFormat;                            // Format
     bool fEnableAGC;                            // Enable Automatic Gain Control(AGC)
@@ -342,13 +347,15 @@ typedef struct _ESL_EXTENSION_RSSI {
     //int16_t nInputPower;                      // Input Power (dBm)
 } ESL_EXTENSION_RSSI, *PESL_EXTENSION_RSSI;
 
-typedef struct _ESL_EXTENSION_BINDING {
+typedef struct _ESL_EXTENSION_BINDING 
+{
     uint8_t nLength;                            // The size of the extension structure
     uint8_t nFormat;                            // Format
     ESL_DEVICE_ID stDeviceID;                   // Host device ID
 } ESL_EXTENSION_BINDING, *PESL_EXTENSION_BINDING;
 
-typedef struct _ESL_EXTENSION_REGISTRATION {
+typedef struct _ESL_EXTENSION_REGISTRATION 
+{
     uint8_t nLength;                            // The size of the extension structure
     uint8_t nFormat;                            // Format
     //uint8_t byProduct[MAX_BARCODE_PRODUCT];   // Commodity, goods
@@ -358,7 +365,8 @@ typedef struct _ESL_EXTENSION_REGISTRATION {
 
 
 //Request & ACK
-typedef struct _ESL_COMMON_PACKET {
+typedef struct _ESL_COMMON_PACKET
+{
     //--- Common Header ---
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
@@ -371,7 +379,8 @@ typedef struct _ESL_COMMON_PACKET {
 } ESL_COMMON_PACKET, *PESL_COMMON_PACKET;
 
 
-typedef struct _ESL_PAIRING_PACKET {
+typedef struct _ESL_PAIRING_PACKET 
+{
     //--- Common Header ---
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
@@ -385,7 +394,8 @@ typedef struct _ESL_PAIRING_PACKET {
     ESL_EXTENSION_RSSI stRssi;                  // RSSI Information
 } ESL_PAIRING_PACKET, *PESL_PAIRING_PACKET;
 
-typedef struct _ESL_REGISTRATION_PACKET {
+typedef struct _ESL_REGISTRATION_PACKET 
+{
     //--- Common Header ---
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
@@ -398,7 +408,8 @@ typedef struct _ESL_REGISTRATION_PACKET {
 } ESL_REGISTRATION_PACKET, *PESL_REGISTRATION_PACKET;
 
 
-typedef struct _ESL_FACTORY_PACKET {
+typedef struct _ESL_FACTORY_PACKET 
+{
     //--- Common Header ---
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
@@ -410,7 +421,8 @@ typedef struct _ESL_FACTORY_PACKET {
     ESL_EXTENSION_FACTORY stFactory;
 } ESL_FACTORY_PACKET, *PESL_FACTORY_PACKET;
 
-typedef struct _ESL_BARCODE_PACKET {
+typedef struct _ESL_BARCODE_PACKET 
+{
     //--- Common Header ---
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
@@ -422,7 +434,8 @@ typedef struct _ESL_BARCODE_PACKET {
     ESL_EXTENSION_BARCODE stBarcode;
 } ESL_BARCODE_PACKET, *PESL_BARCODE_PACKET;
 
-typedef struct _ESL_REPLY_PACKET {
+typedef struct _ESL_REPLY_PACKET 
+{
     //--- Common Header ---
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
@@ -435,7 +448,8 @@ typedef struct _ESL_REPLY_PACKET {
 } ESL_REPLY_PACKET, *PESL_REPLY_PACKET;
 
 
-typedef struct _ESL_RSSI_PACKET {
+typedef struct _ESL_RSSI_PACKET 
+{
     //--- Common Header ---
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
