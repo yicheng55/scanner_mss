@@ -72,9 +72,10 @@
 //#define MAX_BARCODE_DASH				1				// Dash	
 //#define MAX_BARCODE_IDENTIFIER		10				// Identifier
 
-#define MAX_DEVICE_EUID					3
-#define MAX_DEVICE_ESID					2
-#define MAX_DEVICE_EFID					(MAX_DEVICE_EUID+MAX_DEVICE_ESID)
+#define MAX_DEVICE_EUID					3				// ESL Unique Identifier
+#define MAX_DEVICE_ESID					2				// ESL Species Identifier
+#define MAX_DEVICE_ECID					3				// ESL Combo Identifier    (Device Type ID + Species ID)
+#define MAX_DEVICE_EFID					(MAX_DEVICE_EUID+MAX_DEVICE_ESID) // ESL Full Identifier 
 #define MAX_DEVICE_IDENTIFIER			MAX_DEVICE_EFID
 
 
@@ -144,6 +145,12 @@ typedef struct _ESL_DEVICE_SPLIT_ID_
 	uint8_t	byEUID[MAX_DEVICE_EUID]; 	// ESL Device Unique Identifier
 	uint8_t	byESID[MAX_DEVICE_ESID]; 	// ESL Device Specific Definition	
 }ESL_DEVICE_SPLIT_ID, *PESL_DEVICE_SPLIT_ID;
+
+typedef struct _ESL_DEVICE_COMBO_ID_
+{
+	uint8_t	byECID; 					// ESL Device Commbo Identifier
+	uint8_t	byESID[MAX_DEVICE_ESID]; 	// ESL Device Specific Definition	
+}ESL_DEVICE_COMBO_ID, *PESL_DEVICE_COMBO_ID;
 
 typedef struct _ESL_DEVICE_ID_
 {

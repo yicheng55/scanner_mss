@@ -296,6 +296,8 @@ typedef struct _ESL_COMMON_HEADER
     uint8_t ExtensionData[1];                   // Extension Data
 } ESL_COMMON_HEADER, *PESL_COMMON_HEADER;
 
+#if 0
+// ESL 1.0
 typedef struct 
 {
     uint8_t      BeaconSeq;
@@ -306,6 +308,48 @@ typedef struct
     uint8_t      GatewayID[2];
     uint8_t      RepeaterID[2];
 } SYNC_BEACON, *P_SYNC_BEACON, *PSYNC_BEACON;
+#else
+// ESL 1.1
+#if 0
+typedef struct 
+{
+    uint8_t      byBeaconSeq;
+    uint8_t      byBeaconType;
+    uint8_t      byAction;
+    uint8_t      byChnCtrl;
+    uint8_t      byWakeUpTime;
+    uint8_t      byTimeSecond;	
+    uint8_t      byGatewayID[3];
+    uint8_t      byRepeaterID[3];
+    uint8_t      byReversion;
+    uint8_t      byVendorID[2];	
+	uint8_t      byReserved;
+} SYNC_BEACON, *P_SYNC_BEACON, *PSYNC_BEACON;
+#endif
+
+typedef struct 
+{
+    uint8_t      byBeaconSeq;
+    uint8_t      byBeaconType;
+    uint8_t      byAction;
+    uint8_t      byChnCtrl;
+    uint8_t      byWakeUpTime;
+    uint8_t      byTimeSecond;	
+	union
+	{
+		uint8_t	byGatewayID[MAX_DEVICE_ECID]; 		// ESL Device Full Identifier
+		ESL_DEVICE_COMBO_ID  stGateway;				// ESL Device Split Identifier
+	};	
+	union
+	{
+		uint8_t	byRepeaterID[MAX_DEVICE_ECID]; 		// ESL Device Full Identifier
+		ESL_DEVICE_COMBO_ID  stRepeater;			// ESL Device Split Identifier
+	};	
+    uint8_t      byReversion;
+    uint8_t      byVendorID[2];	
+	uint8_t      byReserved;
+} SYNC_BEACON, *P_SYNC_BEACON, *PSYNC_BEACON;
+#endif
 
 typedef struct _ESL_EXTENSION_PAIRING_PACKET 
 {
