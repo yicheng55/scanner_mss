@@ -16,6 +16,8 @@ ESL_NVM_DATA g_stNvmMappingData;
 
 // NVM Start address 0x3EF00 (512 bytes) for Scanner parameter.
 //const ESL_NVM_DATA g_stNvmData __attribute__( (at(FLASH_ADDRESS_SCANNER_NVM) ) );	
+#if 0
+// ESL Protocol v1.0
 const ESL_NVM_DATA g_stNvmData __attribute__((at(FLASH_ADDRESS_SCANNER_NVM))) = 
 	{
 		FLASH_MAGIC_CODE, 			// Magic Code
@@ -30,6 +32,23 @@ const ESL_NVM_DATA g_stNvmData __attribute__((at(FLASH_ADDRESS_SCANNER_NVM))) =
 		TEXT_VENDOR_NAME, 			// Vendor Name
 		TEXT_MANUFACTURER_NAME		// Manufacturer Name
 	};
+#endif
+// ESL Protovol v1.1	
+const ESL_NVM_DATA g_stNvmData __attribute__((at(FLASH_ADDRESS_SCANNER_NVM))) = 
+	{
+		FLASH_MAGIC_CODE, 			// Magic Code
+		OSSM_BARCODE_READER_MODE,	// Scanner Mode
+		RF_DEFAULT_ENCRYPTION_MODE, // RF Encrption Mode
+		RF_DEFAULT_CHANNEL,			// RF Channel
+		RF_DEFAULT_DATARATE,			// RF Data Rate
+		EISI_DEFAULT_ID,			// ESL Scanner Device Unique Identifier (0xFF, 0xFF, 0xFD)
+		EUSI_SCANNER_ID,			// ESL Device Specific Definition (0x00, 0x00 ~ 0xFF, 0xFF)	
+		TEXT_DEVICE_NAME,			// Device Name
+		TEXT_MODEL_NAME,			// Model Name
+		TEXT_VENDOR_NAME, 			// Vendor Name
+		TEXT_MANUFACTURER_NAME		// Manufacturer Name
+	};
+	
 
 
 //------------------------------------------------------------------------------

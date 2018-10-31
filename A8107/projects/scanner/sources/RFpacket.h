@@ -38,7 +38,12 @@
 //------------------------------------------------------------------------------
 //#define ESID_DEFAULT_ID				{0x00, 0x07}	// Device Specific
 //#define EDID_DEFAULT_ID				{EUID_SCANNER_ID, 0x00, 0x07}	// ESL Device ID
-#define EDID_DEFAULT_ID				{EUID_SCANNER_ID, ESID_SCANNER_ID}	// ESL Device ID
+
+// ESL Protocol v1.0
+//#define EDID_DEFAULT_ID				{EUID_SCANNER_ID, ESID_SCANNER_ID}	// ESL Device ID
+
+// ESL Protocol v1.1
+#define EUSI_DEFAULT_ID				{EISI_DEFAULT_ID, EUSI_SCANNER_ID}	// ESL Device ID
 
 
 //------------------------------------------------------------------------------

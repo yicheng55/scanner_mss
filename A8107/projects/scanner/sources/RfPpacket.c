@@ -134,8 +134,8 @@ void RfPacket(void)
 void RfPacketInit(void)
 {
 	//uint8_t byDeviceID[MAX_DEVICE_IDENTIFIER] = EDID_DEFAULT_ID;
-	uint8_t stRepeaterID[MAX_DEVICE_IDENTIFIER] = { EUID_REPEATER_ID, 0x00, 0x00 };
-	uint8_t stGatewayID[MAX_DEVICE_IDENTIFIER] = { EUID_GATEWAY_ID, 0x00, 0x00 };
+	uint8_t stRepeaterID[MAX_DEVICE_IDENTIFIER] = { EISI_DEFAULT_ID, EUSI_REPEATER_ID };
+	uint8_t stGatewayID[MAX_DEVICE_IDENTIFIER] = { EISI_DEFAULT_ID, EUSI_GATEWAY_ID };
 	uint8_t uiIndex = 0;
 	
 	// Initial Device ID
@@ -964,11 +964,11 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 	
 #if 0
 	// Show binding host and packet's GID/RID
-	DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("BeaconMode = %d, GID: %02X%02X, RID: %02X%02X, BID: %02X%02X\r\n"),
+	DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("BeaconMode = %d, GID: %02X%02X%02X, RID: %02X%02X%02X, BID: %02X%02X%02X\r\n"),
 	m_uiBeaconMode,
-	pstSyncBeacon->GatewayID[0], pstSyncBeacon->GatewayID[1], 
-	pstSyncBeacon->RepeaterID[0], pstSyncBeacon->RepeaterID[1],
-	m_stBindingID.Split.byESID[0], m_stBindingID.Split.byESID[1]);
+	pstSyncBeacon->GatewayID[0], pstSyncBeacon->GatewayID[1], pstSyncBeacon->GatewayID[2], 
+	pstSyncBeacon->RepeaterID[0], pstSyncBeacon->RepeaterID[1], pstSyncBeacon->RepeaterID[2],
+	m_stBindingID.stComboID.byEUSI[0], m_stBindingID.stComboID.byEUSI[1], m_stBindingID.stComboID.byEUSI[2]);
 #endif
 	
 	
@@ -976,25 +976,31 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 	{
 		if (IsGatewayID(m_stBindingID.byEFID))
 		{
-			if ((m_stBindingID.Split.byESID[0] != pstSyncBeacon->stGateway.byESID[0]) ||
-				(m_stBindingID.Split.byESID[1] != pstSyncBeacon->stGateway.byESID[1]))
+			if ((m_stBindingID.stComboID.byEUSI[0] != pstSyncBeacon->byGatewayID[0]) ||
+				(m_stBindingID.stComboID.byEUSI[1] != pstSyncBeacon->byGatewayID[1]) ||
+				(m_stBindingID.stComboID.byEUSI[2] != pstSyncBeacon->byGatewayID[2]))
 			{
-				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Unbind gateway(%02X-%02X) synchronization signal.\r\n"), pstSyncBeacon->stGateway.byESID[0], pstSyncBeacon->stGateway.byESID[1]);
+				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Unbind gateway(%02X-%02X-%02X) synchronization signal.\r\n"), 
+				pstSyncBeacon->byGatewayID[0], pstSyncBeacon->byGatewayID[1], pstSyncBeacon->byGatewayID[2]);
 				return ERROR_SUCCESS;
 			}
 		}
 		else if (IsRepeaterID(m_stBindingID.byEFID))
 		{
-			if ((m_stBindingID.Split.byESID[0] != pstSyncBeacon->stRepeater.byESID[0]) ||
-				(m_stBindingID.Split.byESID[1] != pstSyncBeacon->stRepeater.byESID[1]))
+			if ((m_stBindingID.stComboID.byEUSI[0] != pstSyncBeacon->byRepeaterID[0]) ||
+				(m_stBindingID.stComboID.byEUSI[1] != pstSyncBeacon->byRepeaterID[1]) ||
+				(m_stBindingID.stComboID.byEUSI[2] != pstSyncBeacon->byRepeaterID[2]))
 			{
-				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Unbind repeater(%02X-%02X) synchronization signal.\r\n"), pstSyncBeacon->stRepeater.byESID[0], pstSyncBeacon->stRepeater.byESID[1]);
+				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Unbind repeater(%02X-%02X-%02X) synchronization signal.\r\n"), 
+				pstSyncBeacon->byRepeaterID[0], pstSyncBeacon->byRepeaterID[1], pstSyncBeacon->byRepeaterID[2]);
 				return ERROR_SUCCESS;
 			}			
 		}
 		else
 		{
-			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of unknown device. (GID: %02X-%02X, RID: %02X-%02X)\r\n"), pstSyncBeacon->stGateway.byESID[0], pstSyncBeacon->stGateway.byESID[1], pstSyncBeacon->stRepeater.byESID[0], pstSyncBeacon->stRepeater.byESID[1]);
+			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of unknown device. (GID: %02X-%02X-%02X, RID: %02X-%02X-%02X)\r\n"), 
+			pstSyncBeacon->byGatewayID[0], pstSyncBeacon->byGatewayID[1], pstSyncBeacon->byGatewayID[2], 
+			pstSyncBeacon->byRepeaterID[0], pstSyncBeacon->byRepeaterID[1], pstSyncBeacon->byRepeaterID[2]);
 			return ERROR_SUCCESS;
 		}
 	}
@@ -1005,58 +1011,68 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 			RfResetBindingID();	
 		
 		// First sync
-		if ((m_stBindingID.Split.byESID[0] == 0x00) && (m_stBindingID.Split.byESID[1] == 0x00))
+		if ((m_stBindingID.stComboID.byEUSI[0] == 0x00) && (m_stBindingID.stComboID.byEUSI[1] == 0x00)&& (m_stBindingID.stComboID.byEUSI[2] == 0x00))
 		{
 			ESL_DEVICE_ID stDeviceID;		
-			if (((pstSyncBeacon->stGateway.byESID[0] != 0x00) || (pstSyncBeacon->stGateway.byESID[1] != 0x00)) &&
-				(pstSyncBeacon->stRepeater.byESID[0] == 0x00) && (pstSyncBeacon->stRepeater.byESID[1] == 0x00))
+			if (((pstSyncBeacon->byGatewayID[0] != 0x00) || (pstSyncBeacon->byGatewayID[1] != 0x00)|| (pstSyncBeacon->byGatewayID[2] != 0x00)) &&
+				(pstSyncBeacon->byRepeaterID[0] == 0x00) && (pstSyncBeacon->byRepeaterID[1] == 0x00)&& (pstSyncBeacon->byRepeaterID[2] == 0x00))
 			{
 				// Bind to the gateway			
-				uint8_t byDeviceID[MAX_DEVICE_IDENTIFIER] = {EUID_GATEWAY_ID, 0x00, 0x00};
-				memcpy(stDeviceID.Split.byEUID, byDeviceID, sizeof(stDeviceID.Split.byEUID));				
-				memcpy(stDeviceID.Split.byESID, pstSyncBeacon->stGateway.byESID, sizeof(stDeviceID.Split.byESID));		
-				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Bind to the gateway(%02X-%02X).\r\n"), pstSyncBeacon->stGateway.byESID[0], pstSyncBeacon->stGateway.byESID[1]);	
+				uint8_t byDeviceID[MAX_DEVICE_IDENTIFIER] = {EISI_DEFAULT_ID, EUSI_GATEWAY_ID};
+				memcpy(stDeviceID.stComboID.byEISI, byDeviceID, sizeof(stDeviceID.stComboID.byEISI));				
+				memcpy(stDeviceID.stComboID.byEUSI, pstSyncBeacon->byGatewayID, sizeof(stDeviceID.stComboID.byEUSI));		
+				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Bind to the gateway(%02X-%02X-%02X).\r\n"), 
+				pstSyncBeacon->byGatewayID[0], pstSyncBeacon->byGatewayID[1], pstSyncBeacon->byGatewayID[2]);	
 				SetBindingID(stDeviceID);
 				
 			}
-			else if (((pstSyncBeacon->stGateway.byESID[0] != 0x00) || (pstSyncBeacon->stGateway.byESID[1] != 0x00)) &&
-				(pstSyncBeacon->stRepeater.byESID[0] == 0x00) && (pstSyncBeacon->stRepeater.byESID[1] == 0x00))
+			else if (((pstSyncBeacon->byGatewayID[0] != 0x00) || (pstSyncBeacon->byGatewayID[1] != 0x00)|| (pstSyncBeacon->byGatewayID[2] != 0x00)) &&
+				(pstSyncBeacon->byRepeaterID[0] == 0x00) && (pstSyncBeacon->byRepeaterID[1] == 0x00)&& (pstSyncBeacon->byRepeaterID[2] == 0x00))
 			{
 				// Bind to the repeater
-				uint8_t byDeviceID[MAX_DEVICE_IDENTIFIER] = {EUID_REPEATER_ID, 0x00, 0x00};
-				memcpy(stDeviceID.Split.byEUID, byDeviceID, sizeof(stDeviceID.Split.byEUID));
-				memcpy(stDeviceID.Split.byESID, pstSyncBeacon->stRepeater.byESID, sizeof(stDeviceID.Split.byESID));
-				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Bind to the repeater(%02X-%02X).\r\n"), pstSyncBeacon->stRepeater.byESID[0], pstSyncBeacon->stRepeater.byESID[1]);				
+				uint8_t byDeviceID[MAX_DEVICE_IDENTIFIER] = {EISI_DEFAULT_ID, EUSI_REPEATER_ID};
+				memcpy(stDeviceID.stComboID.byEISI, byDeviceID, sizeof(stDeviceID.stComboID.byEISI));
+				memcpy(stDeviceID.stComboID.byEUSI, pstSyncBeacon->byRepeaterID, sizeof(stDeviceID.stComboID.byEUSI));
+				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Bind to the repeater(%02X-%02X).\r\n"), 
+				pstSyncBeacon->byRepeaterID[0], pstSyncBeacon->byRepeaterID[1], pstSyncBeacon->byRepeaterID[2]);				
 				SetBindingID(stDeviceID);
 			}
 		}
 		
 		if (IsGatewayID(m_stBindingID.byEFID))
 		{
-			if ((m_stBindingID.Split.byESID[0] != pstSyncBeacon->stGateway.byESID[0]) ||
-				(m_stBindingID.Split.byESID[1] != pstSyncBeacon->stGateway.byESID[1]))
+			if ((m_stBindingID.stComboID.byEUSI[0] != pstSyncBeacon->byGatewayID[0]) ||
+				(m_stBindingID.stComboID.byEUSI[1] != pstSyncBeacon->byGatewayID[1]) ||
+				(m_stBindingID.stComboID.byEUSI[1] != pstSyncBeacon->byGatewayID[2]))
 			{
-				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of unsynchronized gateway(%02X-%02X).\r\n"), pstSyncBeacon->stGateway.byESID[0], pstSyncBeacon->stGateway.byESID[1]);
+				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of unsynchronized gateway(%02X-%02X-%02X).\r\n"), 
+				pstSyncBeacon->byGatewayID[0], pstSyncBeacon->byGatewayID[1], pstSyncBeacon->byGatewayID[2]);
 				return ERROR_SUCCESS;
 			}
 		}
 		else if (IsRepeaterID(m_stBindingID.byEFID))
 		{
-			if ((m_stBindingID.Split.byESID[0] != pstSyncBeacon->stRepeater.byESID[0]) ||
-				(m_stBindingID.Split.byESID[1] != pstSyncBeacon->stRepeater.byESID[1]))
+			if ((m_stBindingID.stComboID.byEUSI[0] != pstSyncBeacon->byRepeaterID[0]) ||
+				(m_stBindingID.stComboID.byEUSI[1] != pstSyncBeacon->byRepeaterID[1]) ||
+				(m_stBindingID.stComboID.byEUSI[2] != pstSyncBeacon->byRepeaterID[2]))
 			{
-				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of unsynchronized repeater(%02X-%02X).\r\n"), pstSyncBeacon->stRepeater.byESID[0], pstSyncBeacon->stRepeater.byESID[1]);
+				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of unsynchronized repeater(%02X-%02X-%02X).\r\n"), 
+				pstSyncBeacon->byRepeaterID[0], pstSyncBeacon->byRepeaterID[1], pstSyncBeacon->byRepeaterID[2]);
 				return ERROR_SUCCESS;
 			}			
 		}
-		else if ((pstSyncBeacon->stGateway.byESID[0] == 0x00) && (pstSyncBeacon->stGateway.byESID[1] == 0x00))
+		else if ((pstSyncBeacon->byGatewayID[0] == 0x00) && (pstSyncBeacon->byGatewayID[1] == 0x00) && (pstSyncBeacon->byGatewayID[2] == 0x00))
 		{
-			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of illegal unsynchronized device. (GID: %02X-%02X, RID: %02X-%02X)\r\n"), pstSyncBeacon->stGateway.byESID[0], pstSyncBeacon->stGateway.byESID[1], pstSyncBeacon->stRepeater.byESID[0], pstSyncBeacon->stRepeater.byESID[1]);
+			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of illegal unsynchronized device. (GID: %02X-%02X-%02X, RID: %02X-%02X-%02X)\r\n"), 
+			pstSyncBeacon->byGatewayID[0], pstSyncBeacon->byGatewayID[1], pstSyncBeacon->byGatewayID[2], 
+			pstSyncBeacon->byRepeaterID[0], pstSyncBeacon->byRepeaterID[1], pstSyncBeacon->byRepeaterID[2]);
 			return ERROR_SUCCESS;			
 		}
 		else
 		{
-			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of unknown unsynchronized device. (GID: %02X-%02X, RID: %02X-%02X)\r\n"), pstSyncBeacon->stGateway.byESID[0], pstSyncBeacon->stGateway.byESID[1], pstSyncBeacon->stRepeater.byESID[0], pstSyncBeacon->stRepeater.byESID[1]);
+			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of unknown unsynchronized device. (GID: %02X-%02X-%02X, RID: %02X-%02X-%02X)\r\n"), 
+			pstSyncBeacon->byGatewayID[0], pstSyncBeacon->byGatewayID[1], pstSyncBeacon->byGatewayID[2], 
+			pstSyncBeacon->byRepeaterID[0], pstSyncBeacon->byRepeaterID[1], pstSyncBeacon->byRepeaterID[2]);
 			return ERROR_SUCCESS;
 		}
 		m_uiBeaconTickCount = GetTickCount();
@@ -1074,8 +1090,8 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 		else if (ScannerIsPairing())
 		{
 			LedSetStatus(OSLS_TRANSMISSION_STATE);
-			memcpy(m_stGatewayID.Split.byESID, pstSyncBeacon->stGateway.byESID, sizeof(m_stGatewayID.Split.byESID));		
-			memcpy(m_stRepeaterID.Split.byESID, pstSyncBeacon->stRepeater.byESID, sizeof(m_stRepeaterID.Split.byESID));
+			memcpy(m_stGatewayID.stComboID.byEUSI, pstSyncBeacon->byGatewayID, sizeof(m_stGatewayID.stComboID.byEUSI));		
+			memcpy(m_stRepeaterID.stComboID.byEUSI, pstSyncBeacon->byRepeaterID, sizeof(m_stRepeaterID.stComboID.byEUSI));
 			uiResult = ScannerSendPairing();	
 			switch(uiResult)
 			{	
@@ -1104,8 +1120,8 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 		else if (ScannerIsRegistration())
 		{
 			LedSetStatus(OSLS_TRANSMISSION_STATE);
-			memcpy(m_stGatewayID.Split.byESID, pstSyncBeacon->stGateway.byESID, sizeof(m_stGatewayID.Split.byESID));
-			memcpy(m_stRepeaterID.Split.byESID, pstSyncBeacon->stRepeater.byESID, sizeof(m_stRepeaterID.Split.byESID));
+			memcpy(m_stGatewayID.stComboID.byEUSI, pstSyncBeacon->byGatewayID, sizeof(m_stGatewayID.stComboID.byEUSI));
+			memcpy(m_stRepeaterID.stComboID.byEUSI, pstSyncBeacon->byRepeaterID, sizeof(m_stRepeaterID.stComboID.byEUSI));
 			uiResult = ScannerSendRegistration();
 			switch(uiResult)
 			{	
@@ -1134,8 +1150,8 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 		else if (ScannerIsCommand())
 		{
 			LedSetStatus(OSLS_TRANSMISSION_STATE);
-			memcpy(m_stGatewayID.Split.byESID, pstSyncBeacon->stGateway.byESID, sizeof(m_stGatewayID.Split.byESID));
-			memcpy(m_stRepeaterID.Split.byESID, pstSyncBeacon->stRepeater.byESID, sizeof(m_stRepeaterID.Split.byESID));
+			memcpy(m_stGatewayID.stComboID.byEUSI, pstSyncBeacon->byGatewayID, sizeof(m_stGatewayID.stComboID.byEUSI));
+			memcpy(m_stRepeaterID.stComboID.byEUSI, pstSyncBeacon->byRepeaterID, sizeof(m_stRepeaterID.stComboID.byEUSI));
 			uiResult = ScannerSendCommand();
 			switch(uiResult)
 			{	
@@ -1164,8 +1180,8 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 		else if (ScannerIsBarcode())
 		{
 			LedSetStatus(OSLS_TRANSMISSION_STATE);
-			memcpy(m_stGatewayID.Split.byESID, pstSyncBeacon->stGateway.byESID, sizeof(m_stGatewayID.Split.byESID));
-			memcpy(m_stRepeaterID.Split.byESID, pstSyncBeacon->stRepeater.byESID, sizeof(m_stRepeaterID.Split.byESID));
+			memcpy(m_stGatewayID.stComboID.byEUSI, pstSyncBeacon->byGatewayID, sizeof(m_stGatewayID.stComboID.byEUSI));
+			memcpy(m_stRepeaterID.stComboID.byEUSI, pstSyncBeacon->byRepeaterID, sizeof(m_stRepeaterID.stComboID.byEUSI));
 			uiResult = ScannerSendBarcode();
 			switch(uiResult)
 			{	
@@ -1378,9 +1394,9 @@ bool RfSendBarcodePairing(BARCODE_PAIR *pstBarcode)
 	pstScannerPacket->bySequenceNumber = m_uiTxSeqNo++;
 	pstScannerPacket->byPacketType = RF_PT_SCANNER_PACKET;
 	pstScannerPacket->byCommand = pstBarcode->uiCommand;  // RF_CMD_SCANNER_PAIRING, RF_CMD_SCANNER_UNPAIRING
-	memcpy(pstScannerPacket->byGatewayID, m_stGatewayID.Split.byESID, sizeof(pstScannerPacket->byGatewayID));
-	memcpy(pstScannerPacket->byRepeaterID, m_stRepeaterID.Split.byESID, sizeof(pstScannerPacket->byRepeaterID));
-	memcpy(pstScannerPacket->byDeviceID, g_stNvmMappingData.stDeviceID.Split.byESID, sizeof(pstScannerPacket->byDeviceID));
+	memcpy(pstScannerPacket->byGatewayID, m_stGatewayID.stComboID.byEUSI, sizeof(pstScannerPacket->byGatewayID));
+	memcpy(pstScannerPacket->byRepeaterID, m_stRepeaterID.stComboID.byEUSI, sizeof(pstScannerPacket->byRepeaterID));
+	memcpy(pstScannerPacket->byDeviceID, g_stNvmMappingData.stDeviceID.stComboID.byEUSI, sizeof(pstScannerPacket->byDeviceID));
 	pstScannerPacket->stPairing.nLength = sizeof(ESL_EXTENSION_PAIRING);  
 	if (pstScannerPacket->byCommand == RF_CMD_SCANNER_PAIRING)
 	{
@@ -1448,9 +1464,9 @@ bool RfSendBarcodeRegistration(BARCODE_PAIR *pstBarcode)
 	pstScannerPacket->bySequenceNumber = m_uiTxSeqNo++;
 	pstScannerPacket->byPacketType = RF_PT_SCANNER_PACKET; 
 	pstScannerPacket->byCommand = pstBarcode->uiCommand;
-	memcpy(pstScannerPacket->byGatewayID, m_stGatewayID.Split.byESID, sizeof(pstScannerPacket->byGatewayID));
-	memcpy(pstScannerPacket->byRepeaterID, m_stRepeaterID.Split.byESID, sizeof(pstScannerPacket->byRepeaterID));
-	memcpy(pstScannerPacket->byDeviceID, g_stNvmMappingData.stDeviceID.Split.byESID, sizeof(pstScannerPacket->byDeviceID));
+	memcpy(pstScannerPacket->byGatewayID, m_stGatewayID.stComboID.byEUSI, sizeof(pstScannerPacket->byGatewayID));
+	memcpy(pstScannerPacket->byRepeaterID, m_stRepeaterID.stComboID.byEUSI, sizeof(pstScannerPacket->byRepeaterID));
+	memcpy(pstScannerPacket->byDeviceID, g_stNvmMappingData.stDeviceID.stComboID.byEUSI, sizeof(pstScannerPacket->byDeviceID));
 	
 	// Registration Information
 	pstScannerPacket->stRegistration.nLength = sizeof(ESL_EXTENSION_REGISTRATION);
@@ -1500,9 +1516,9 @@ bool RfSendBarcodeCommand(BARCODE_PAIR *pstBarcode)
 	pstScannerPacket->bySequenceNumber = m_uiTxSeqNo++;
 	pstScannerPacket->byPacketType = RF_PT_SCANNER_PACKET; 
 	pstScannerPacket->byCommand = pstBarcode->uiCommand;
-	memcpy(pstScannerPacket->byGatewayID, m_stGatewayID.Split.byESID, sizeof(pstScannerPacket->byGatewayID));
-	memcpy(pstScannerPacket->byRepeaterID, m_stRepeaterID.Split.byESID, sizeof(pstScannerPacket->byRepeaterID));
-	memcpy(pstScannerPacket->byDeviceID, g_stNvmMappingData.stDeviceID.Split.byESID, sizeof(pstScannerPacket->byDeviceID));
+	memcpy(pstScannerPacket->byGatewayID, m_stGatewayID.stComboID.byEUSI, sizeof(pstScannerPacket->byGatewayID));
+	memcpy(pstScannerPacket->byRepeaterID, m_stRepeaterID.stComboID.byEUSI, sizeof(pstScannerPacket->byRepeaterID));
+	memcpy(pstScannerPacket->byDeviceID, g_stNvmMappingData.stDeviceID.stComboID.byEUSI, sizeof(pstScannerPacket->byDeviceID));
 	
 	pstScannerPacket->stFactory.nLength = sizeof(ESL_EXTENSION_FACTORY);  
 	pstScannerPacket->stFactory.nFormat = RF_FMT_EXTENSION_COMMAND;
@@ -1548,9 +1564,9 @@ bool RfSendBarcodeInformation(BARCODE_PAIR *pstBarcode)
 	pstScannerPacket->bySequenceNumber = m_uiTxSeqNo++;
 	pstScannerPacket->byPacketType = RF_PT_SCANNER_PACKET; 
 	pstScannerPacket->byCommand = pstBarcode->uiCommand;
-	memcpy(pstScannerPacket->byGatewayID, m_stGatewayID.Split.byESID, sizeof(pstScannerPacket->byGatewayID));
-	memcpy(pstScannerPacket->byRepeaterID, m_stRepeaterID.Split.byESID, sizeof(pstScannerPacket->byRepeaterID));
-	memcpy(pstScannerPacket->byDeviceID, g_stNvmMappingData.stDeviceID.Split.byESID, sizeof(pstScannerPacket->byDeviceID));
+	memcpy(pstScannerPacket->byGatewayID, m_stGatewayID.stComboID.byEUSI, sizeof(pstScannerPacket->byGatewayID));
+	memcpy(pstScannerPacket->byRepeaterID, m_stRepeaterID.stComboID.byEUSI, sizeof(pstScannerPacket->byRepeaterID));
+	memcpy(pstScannerPacket->byDeviceID, g_stNvmMappingData.stDeviceID.stComboID.byEUSI, sizeof(pstScannerPacket->byDeviceID));
 	
 	
 	pstScannerPacket->stBarcode.nLength = sizeof(ESL_EXTENSION_BARCODE);  

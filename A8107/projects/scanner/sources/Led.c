@@ -68,7 +68,9 @@ void Led()
 //==============================================================================
 void LedSetStatus(uint8_t uiStatus)
 {
-	if ((g_stNvmMappingData.stDeviceID.Split.byESID[0] == 0x00) && (g_stNvmMappingData.stDeviceID.Split.byESID[1] == 0x00) && (uiStatus != OSLS_POWER_ON_STATE))
+	if ((g_stNvmMappingData.stDeviceID.stComboID.byEUSI[0] == 0x00) && 
+		(g_stNvmMappingData.stDeviceID.stComboID.byEUSI[1] == 0x00) &&
+		(g_stNvmMappingData.stDeviceID.stComboID.byEUSI[2] == 0x00) && (uiStatus != OSLS_POWER_ON_STATE))
 	{
 		m_uiNextStatus = OSLS_NO_DEVICE_ID;
 	}

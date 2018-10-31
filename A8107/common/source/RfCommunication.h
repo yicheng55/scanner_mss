@@ -33,19 +33,34 @@
 //------------------------------------------------------------------------------
 // ID[0~4] = ID[0][1][2]3][4]
 //      ID[0]= (ID[1]+ID[2]+ID[3]+ID[4]) mod 255
-//      Gateway ID  : FFFFFF-XXXX  (ID[0] == 0xFF, ID[2] == 0xFF)
-//      Repeater ID : FFFFFE-XXXX  (ID[0] == 0xFF, ID[2] == 0xFE)
-//      Scanner ID  : FFFFFD-XXXX  (ID[0] == 0xFF, ID[2] == 0xFD)
+//      Gateway ID  : FFFF-FF-XXXX  (ID[0] == 0xFF, ID[2] == 0xFF)
+//      Repeater ID : FFFF-FE-XXXX  (ID[0] == 0xFF, ID[2] == 0xFE)
+//      Scanner ID  : FFFF-FD-XXXX  (ID[0] == 0xFF, ID[2] == 0xFD)
 //
+#define EFID_DEVICE_TYPE_INDEX	2
+//#define EID_DEVICE__INDEX	2
+//#define EID_DEVICE_TYPE_INDEX	2
 
 //------------------------------------------------------------------------------
 //--- ESL Device Unique Identifier ---
 //------------------------------------------------------------------------------
+#if 0
+// ESL Protocol V1.0
 #define EUID_GATEWAY_ID     0xFF, 0xFF, 0xFF    // ESL Gateway Device Unique Identifier
 #define EUID_REPEATER_ID    0xFF, 0xFF, 0xFE    // ESL Repeater Device Unique Identifier
 #define EUID_SCANNER_ID     0xFF, 0xFF, 0xFD    // ESL Scanner Device Unique Identifier
 
 #define ESID_SCANNER_ID     0x00, 0x00          // ESL Scanner Device Specific Identifier
+#endif
+
+// ESL Protocol V1.1
+#define EISI_DEFAULT_ID     0xFF, 0xFF		    // ESL Gateway Device Unique Identifier
+
+#define EUSI_GATEWAY_ID     0xFF, 0x00, 0x00    // ESL Gateway Device Unique Identifier
+#define EUSI_REPEATER_ID    0xFE, 0x00, 0x00    // ESL Repeater Device Unique Identifier
+#define EUSI_SCANNER_ID     0xFD, 0x00, 0x00    // ESL Scanner Device Unique Identifier
+
+//#define ESID_SCANNER_ID     0x00, 0x00          // ESL Scanner Device Specific Identifier
 
 //==============================================================================
 //--- Declarative RF ---
@@ -310,22 +325,6 @@ typedef struct
 } SYNC_BEACON, *P_SYNC_BEACON, *PSYNC_BEACON;
 #else
 // ESL 1.1
-#if 0
-typedef struct 
-{
-    uint8_t      byBeaconSeq;
-    uint8_t      byBeaconType;
-    uint8_t      byAction;
-    uint8_t      byChnCtrl;
-    uint8_t      byWakeUpTime;
-    uint8_t      byTimeSecond;	
-    uint8_t      byGatewayID[3];
-    uint8_t      byRepeaterID[3];
-    uint8_t      byReversion;
-    uint8_t      byVendorID[2];	
-	uint8_t      byReserved;
-} SYNC_BEACON, *P_SYNC_BEACON, *PSYNC_BEACON;
-#endif
 
 typedef struct 
 {
@@ -335,18 +334,10 @@ typedef struct
     uint8_t      byChnCtrl;
     uint8_t      byWakeUpTime;
     uint8_t      byTimeSecond;	
-	union
-	{
-		uint8_t	byGatewayID[MAX_DEVICE_ECID]; 		// ESL Device Full Identifier
-		ESL_DEVICE_COMBO_ID  stGateway;				// ESL Device Split Identifier
-	};	
-	union
-	{
-		uint8_t	byRepeaterID[MAX_DEVICE_ECID]; 		// ESL Device Full Identifier
-		ESL_DEVICE_COMBO_ID  stRepeater;			// ESL Device Split Identifier
-	};	
+    uint8_t      byGatewayID[MAX_DEVICE_EUSI];	// ESL Unique Sub-Identifier
+    uint8_t      byRepeaterID[MAX_DEVICE_EUSI]; // ESL Unique Sub-Identifier
     uint8_t      byReversion;
-    uint8_t      byVendorID[2];	
+    uint8_t      byVendorID[MAX_VENDOR_ID];	
 	uint8_t      byReserved;
 } SYNC_BEACON, *P_SYNC_BEACON, *PSYNC_BEACON;
 #endif
@@ -415,9 +406,9 @@ typedef struct _ESL_COMMON_PACKET
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
     uint8_t byCommand;                          // Command: RF_CMD_SCANNER_PAIRING, RF_CMD_SCANNER_UNPAIRING, RF_CMD_CONFIRMED_ACK, etc...
-    uint8_t byDeviceID[2];                      // Scanner ID/Tag ID/etc...
-    uint8_t byGatewayID[2];                     // Gateway ID
-    uint8_t byRepeaterID[2];                    // Repeater ID
+    uint8_t byDeviceID[MAX_DEVICE_EUSI];                      // Scanner ID/Tag ID/etc...
+    uint8_t byGatewayID[MAX_DEVICE_EUSI];                     // Gateway ID
+    uint8_t byRepeaterID[MAX_DEVICE_EUSI];                    // Repeater ID
     //--- Externsion Data ---
     uint8_t ExtensionData[1];                   // Extension Data
 } ESL_COMMON_PACKET, *PESL_COMMON_PACKET;
@@ -429,9 +420,9 @@ typedef struct _ESL_PAIRING_PACKET
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
     uint8_t byCommand;                          // Command: RF_CMD_SCANNER_PAIRING, RF_CMD_SCANNER_UNPAIRING, RF_CMD_CONFIRMED_ACK, etc...
-    uint8_t byDeviceID[2];                      // Scanner ID/Tag ID/etc...
-    uint8_t byGatewayID[2];                     // Gateway ID
-    uint8_t byRepeaterID[2];                    // Repeater ID
+    uint8_t byDeviceID[MAX_DEVICE_EUSI];        // Scanner ID/Tag ID/etc...
+    uint8_t byGatewayID[MAX_DEVICE_EUSI];       // Gateway ID
+    uint8_t byRepeaterID[MAX_DEVICE_EUSI];      // Repeater ID
     //--- Externsion Data ---
     ESL_EXTENSION_PAIRING stPairing;            // Pairing Information
     ESL_EXTENSION_BINDING stBinding;            // Binding Information
@@ -444,9 +435,9 @@ typedef struct _ESL_REGISTRATION_PACKET
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
     uint8_t byCommand;                          // Command: RF_CMD_SCANNER_PAIRING, RF_CMD_SCANNER_UNPAIRING, RF_CMD_CONFIRMED_ACK, etc...
-    uint8_t byDeviceID[2];                      // Scanner ID/Tag ID/etc...
-    uint8_t byGatewayID[2];                     // Gateway ID
-    uint8_t byRepeaterID[2];                    // Repeater ID
+    uint8_t byDeviceID[MAX_DEVICE_EUSI];        // Scanner ID/Tag ID/etc...
+    uint8_t byGatewayID[MAX_DEVICE_EUSI];       // Gateway ID
+    uint8_t byRepeaterID[MAX_DEVICE_EUSI];      // Repeater ID
     //--- Externsion Data ---
     ESL_EXTENSION_REGISTRATION stRegistration;  // Registration Information
 } ESL_REGISTRATION_PACKET, *PESL_REGISTRATION_PACKET;
@@ -458,9 +449,9 @@ typedef struct _ESL_FACTORY_PACKET
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
     uint8_t byCommand;                          // Command: RF_CMD_SCANNER_COMMAND, RF_CMD_CONFIRMED_ACK, etc...
-    uint8_t byDeviceID[2];                      // Scanner ID/Tag ID/etc...
-    uint8_t byGatewayID[2];                     // Gateway ID
-    uint8_t byRepeaterID[2];                    // Repeater ID
+    uint8_t byDeviceID[MAX_DEVICE_EUSI];        // Scanner ID/Tag ID/etc...
+    uint8_t byGatewayID[MAX_DEVICE_EUSI];       // Gateway ID
+    uint8_t byRepeaterID[MAX_DEVICE_EUSI];      // Repeater ID
     //--- Externsion Data ---
     ESL_EXTENSION_FACTORY stFactory;
 } ESL_FACTORY_PACKET, *PESL_FACTORY_PACKET;
@@ -471,9 +462,9 @@ typedef struct _ESL_BARCODE_PACKET
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
     uint8_t byCommand;                          // Command: RF_CMD_SCANNER_COMMAND, RF_CMD_CONFIRMED_ACK, etc...
-    uint8_t byDeviceID[2];                      // Scanner ID/Tag ID/etc...
-    uint8_t byGatewayID[2];                     // Gateway ID
-    uint8_t byRepeaterID[2];                    // Repeater ID
+    uint8_t byDeviceID[MAX_DEVICE_EUSI];        // Scanner ID/Tag ID/etc...
+    uint8_t byGatewayID[MAX_DEVICE_EUSI];       // Gateway ID
+    uint8_t byRepeaterID[MAX_DEVICE_EUSI];      // Repeater ID
     //--- Externsion Data ---
     ESL_EXTENSION_BARCODE stBarcode;
 } ESL_BARCODE_PACKET, *PESL_BARCODE_PACKET;
@@ -484,9 +475,9 @@ typedef struct _ESL_REPLY_PACKET
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
     uint8_t byCommand;                          // Command: RF_CMD_SCANNER_COMMAND, RF_CMD_CONFIRMED_ACK, etc...
-    uint8_t byDeviceID[2];                      // Scanner ID/Tag ID/etc...
-    uint8_t byGatewayID[2];                     // Gateway ID
-    uint8_t byRepeaterID[2];                    // Repeater ID
+    uint8_t byDeviceID[MAX_DEVICE_EUSI];        // Scanner ID/Tag ID/etc...
+    uint8_t byGatewayID[MAX_DEVICE_EUSI];       // Gateway ID
+    uint8_t byRepeaterID[MAX_DEVICE_EUSI];      // Repeater ID
     //--- Externsion Data ---
     ESL_EXTENSION_STATUS stStatus;
 } ESL_REPLY_PACKET, *PESL_REPLY_PACKET;
@@ -498,9 +489,9 @@ typedef struct _ESL_RSSI_PACKET
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
     uint8_t byCommand;                          // Command: RF_CMD_SCANNER_PAIRING, RF_CMD_SCANNER_UNPAIRING, RF_CMD_CONFIRMED_ACK, etc...
-    uint8_t byDeviceID[2];                      // Scanner ID/Tag ID/etc...
-    uint8_t byGatewayID[2];                     // Gateway ID
-    uint8_t byRepeaterID[2];                    // Repeater ID
+    uint8_t byDeviceID[MAX_DEVICE_EUSI];        // Scanner ID/Tag ID/etc...
+    uint8_t byGatewayID[MAX_DEVICE_EUSI];       // Gateway ID
+    uint8_t byRepeaterID[MAX_DEVICE_EUSI];      // Repeater ID
     //--- Externsion Data ---
     ESL_EXTENSION_RSSI stRssi;                  // RSSI Information
 } ESL_RSSI_PACKET, *PESL_RSSI_PACKET;

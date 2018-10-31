@@ -964,8 +964,9 @@ uint32_t ScannerSendBarcode()
 // Is it a valid identifier?
 bool ScannerIsValidIdentifier(ESL_DEVICE_ID stDeviceID)
 {
-	uint8_t byDeviceID[MAX_DEVICE_IDENTIFIER] = EDID_DEFAULT_ID;	
-	if (memcmp (stDeviceID.Split.byEUID, byDeviceID, sizeof(stDeviceID.Split.byEUID)) == 0)
+	uint8_t byDeviceID[MAX_DEVICE_IDENTIFIER] = EUSI_DEFAULT_ID;	
+	//if (memcmp (stDeviceID.stComboID.byEUSI, byDeviceID, sizeof(stDeviceID.Split.byEUID)) == 0)
+	if (stDeviceID.byEFID[EFID_DEVICE_TYPE_INDEX] == byDeviceID[EFID_DEVICE_TYPE_INDEX])
 		return true;
 	
 	return false;
