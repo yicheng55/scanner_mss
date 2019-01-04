@@ -64,6 +64,7 @@
 #define SIZE_MODEL_ID					4				// Model 
 #define SIZE_TAG_SCREEN_ID				3				// the first 3 numerical digits for tag size (inch)
 #define SIZE_COLOR_ID					1				// 
+#define SIZE_DEVICE_ID					10				// Device ID
 #define SIZE_COMMAND_ID					10				// Serial
 #define SIZE_PRODUCT_ID					10				// Serial
 #define SIZE_TAG_ID						10				// Serial

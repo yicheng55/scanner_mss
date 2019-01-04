@@ -234,8 +234,9 @@ void ScannerInputData(TCHAR szInput)
 {
 	*m_pszBarcodePos = szInput;
 	if ((*m_pszBarcodePos == 0x00) || (*m_pszBarcodePos == 0x0D))
-	{
+	{	
 		int nBarcodeLen = 0;
+		bool fDeviceID = false;
 		TCHAR * pszPos = NULL;
 		TCHAR * pszFormatPos = NULL;
 		TCHAR * pszDeviceIdString = (TCHAR *)m_stBarcodePair.byDevice;
@@ -243,6 +244,28 @@ void ScannerInputData(TCHAR szInput)
 
 		m_pszBarcodePos = m_szBarcodeScan;	// Set as the starting point
 		nBarcodeLen = strlen(m_szBarcodeScan);
+		
+		if (nBarcodeLen == SIZE_DEVICE_ID)
+		{
+			//DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("DeviceID: %s\r\n"), m_szBarcodeScan);	
+			if ((m_szBarcodeScan[0] == _T('F')) && (m_szBarcodeScan[1] == _T('F')) && 
+				(m_szBarcodeScan[1] == _T('F')) && (m_szBarcodeScan[3] == _T('F')))
+			{
+				// Device ID: Gateway/Repeater/Scanner				
+				fDeviceID = true;
+			}
+			else
+			{
+				unsigned char byDeviceID[MAX_DEVICE_IDENTIFIER];
+				if (GetDeviceHexID(m_szBarcodeScan, byDeviceID, true))
+				{
+					if (byDeviceID[0] == (byDeviceID[1]+byDeviceID[2]+byDeviceID[3]+byDeviceID[4])%255)
+						fDeviceID = true;				
+					else
+						fDeviceID = false;
+				}		
+			}
+		}
 		
 		// Reset LED
 		LedSetStatus(OSLS_SCAN_BARCODE_STATE);
@@ -272,6 +295,7 @@ void ScannerInputData(TCHAR szInput)
 			m_szBarcodeScan[0] = 0x00;
 			return;
 		}
+
 		
 		if (m_szBarcodeScan[0] == 0x00)
 		{
@@ -314,7 +338,7 @@ void ScannerInputData(TCHAR szInput)
 				pszPos += (SIZE_COMPANY_ID + SIZE_FORMAT_ID);
 			}
 				
-			if (m_szBarcodeScan[2] == _T('C')) 
+			if (m_szBarcodeScan[2] == _T('C')) //DMCXXXX-
 			{
 				// Command		
 				ESL_BARCODE_VALUE stBarcodeValue;
@@ -341,15 +365,16 @@ void ScannerInputData(TCHAR szInput)
 					m_uiScannerLastState = SCAN_STAGE_STANDBY;		
 					return;
 				}
-				else
-				{
-					if (m_stBarcodePair.fLock == true)
-					{
-						WARNING_MESSAGE(FLAG_MF_SCANNER, _T("The system is locked and the scan is invalid.\r\n"));	
-						m_szBarcodeScan[0] = 0x00;
-						return;
-					}	
+				else if (m_stBarcodePair.fLock == true)
+				{			
+					WARNING_MESSAGE(FLAG_MF_SCANNER, _T("The system is locked and the scan is invalid.\r\n"));	
+					m_szBarcodeScan[0] = 0x00;
+					return;
 				}	
+				
+#if 1
+				ScannerParseCommand(stBarcodeValue);
+#else
 				// Default Mode
 				if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_SWITCH_DEFAULT_MODE))
 				{
@@ -358,7 +383,6 @@ void ScannerInputData(TCHAR szInput)
 					m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
 					m_stBarcodePair.uiCount = 0;
 					m_stBarcodePair.fLock = false;		
-					//RfSetBindingMode(false);					
 					RfSetBeaconMode(OSBM_BEACON_SYNC_MODE);
 					memset(&stDeviceID, 0, sizeof(ESL_DEVICE_ID));
 					SetBindingID(stDeviceID);
@@ -366,12 +390,7 @@ void ScannerInputData(TCHAR szInput)
 					// Keep the last state
 					m_uiScannerLastState = SCAN_STAGE_STANDBY;					
 				}	
-#if 0
-				else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_AUTO_SCAN_CHANNEL) ||
-					ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_CHANNEL_SCAN))
-#else
 				else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_AUTO_SCAN_CHANNEL))
-#endif
 				{
 					DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Perform automatic detection of channel instructions. (%s)\r\n"), m_stBarcodePair.byCommand);
 					m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
@@ -384,15 +403,14 @@ void ScannerInputData(TCHAR szInput)
 					}
 					else
 					{
+						// Start automatic detection
 						//DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Start automatic detection.\r\n"));
 						//m_stBarcodePair.fLock = true;	
 						RfSetScanChannel(true);
 					}
 					// Keep the last state
-					//m_uiScannerLastState = SCAN_STAGE_STANDBY;	
 					m_uiScannerLastState = SCAN_STAGE_CHANNEL;
 				}
-				#if 1
 				// Binding Host
 				else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_FORCE_UPPER_HOST))
 				{				
@@ -403,7 +421,6 @@ void ScannerInputData(TCHAR szInput)
 					LedSetStatus(OSLS_SCAN_BARCODE_STATE);					
 				
 					// Keep the last state
-					//m_uiScannerLastState = SCAN_STAGE_STANDBY;	
 					m_uiScannerLastState = SCAN_STAGE_BINDING_HOST;				
 				}	
 				// Unbinding Tag
@@ -416,10 +433,9 @@ void ScannerInputData(TCHAR szInput)
 					LedSetStatus(OSLS_SCAN_BARCODE_STATE);					
 				
 					// Keep the last state
-					//m_uiScannerLastState = SCAN_STAGE_STANDBY;	
 					m_uiScannerLastState = SCAN_STAGE_UNBINDING_TAG;				
 				}	
-				#endif
+
 				// Change Device ID
 				else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_CHANGE_DEVICE_ID))
 				{
@@ -430,7 +446,6 @@ void ScannerInputData(TCHAR szInput)
 					LedSetStatus(OSLS_SCAN_BARCODE_STATE);					
 				
 					// Keep the last state
-					//m_uiScannerLastState = SCAN_STAGE_STANDBY;	
 					m_uiScannerLastState = SCAN_STAGE_CHANGE_DEVICE_ID;				
 				}				
 				// Write Configuration to NVM
@@ -443,7 +458,6 @@ void ScannerInputData(TCHAR szInput)
 					LedSetStatus(OSLS_SCAN_BARCODE_STATE);
 					
 					// Keep the last state
-					//m_uiScannerLastState = SCAN_STAGE_STANDBY;	
 					m_uiScannerLastState = SCAN_STAGE_WRITE_CONFIGURATION;
 				}	
 				// Enable Encryption Mode
@@ -637,28 +651,27 @@ void ScannerInputData(TCHAR szInput)
 					// Keep the last state
 					m_uiScannerLastState = SCAN_STAGE_COMMAND;
 				}
+#endif		
+				
 			}
-#ifdef FLAG_MODE_MULTIPLE_PAIRING			
+			// DMTXXXX-
 			else if ((m_szBarcodeScan[2] == _T('T')) && (
 				(m_uiScannerLastState == SCAN_STAGE_PRODUCT) || 
+#ifdef FLAG_MODE_MULTIPLE_PAIRING				
 				(m_uiScannerLastState == SCAN_STAGE_TAG)|| 
+#endif
 				(m_uiScannerLastState == SCAN_STAGE_COMMAND) || 
 				(m_uiScannerLastState == SCAN_STAGE_BINDING_HOST) || 
 				(m_uiScannerLastState == SCAN_STAGE_UNBINDING_TAG) || 
 				(m_uiScannerLastState == SCAN_STAGE_CHANGE_DEVICE_ID) || 
 				(m_uiScannerLastState == SCAN_STAGE_DEVICE_REGISTRATION)))
-#else
-			else if ((m_szBarcodeScan[2] == _T('T')) && (
-				(m_uiScannerLastState == SCAN_STAGE_PRODUCT) || 
-				(m_uiScannerLastState == SCAN_STAGE_COMMAND) || 
-				(m_uiScannerLastState == SCAN_STAGE_BINDING_HOST) || 
-				(m_uiScannerLastState == SCAN_STAGE_UNBINDING_TAG) || 
-				(m_uiScannerLastState == SCAN_STAGE_CHANGE_DEVICE_ID) || 
-				(m_uiScannerLastState == SCAN_STAGE_DEVICE_REGISTRATION)))			
-#endif
 			{
+
 				// Tag		
 				ScannerStringToArray(m_stBarcodePair.byDevice, sizeof(m_stBarcodePair.byDevice), pszPos);
+#if 1
+				ScannerParseTagCommand(pszDeviceIdString);							
+#else
 				if (m_uiScannerLastState == SCAN_STAGE_PRODUCT)
 				{
 					DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("%s and %s paired successfully.\r\n"), m_stBarcodePair.byProduct, m_stBarcodePair.byDevice);	
@@ -668,44 +681,13 @@ void ScannerInputData(TCHAR szInput)
 				}
 				else if (m_uiScannerLastState == SCAN_STAGE_COMMAND)
 				{
-					#if 0
-					if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_SWITCH_DEFAULT_MODE))
-					{
-						DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute switch to default mode instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
-						m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
-						m_stBarcodePair.uiCount = 0;
-						m_stBarcodePair.fLock = false;		
-						RfSetBindingMode(false);
-					}					
-					else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_FORCE_UPPER_HOST))
-					{
-						ESL_DEVICE_ID stDeviceID;
-						DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute the specified host instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
-						m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
-						m_stBarcodePair.uiCount = 0;
-						m_stBarcodePair.fLock = false;					
-						//GetHexID((const PTCHAR) m_stBarcodePair.byDevice, &stDeviceID, true);
-						GetHexID(pszDeviceIdString, &stDeviceID, true);
-						SetBindingID(stDeviceID);
-						RfSetBindingMode(true);
-						//m_stPairingID						
-					}
-					else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_UNPAIRING))
-					{
-						DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("%s and %s unpaired successfully.\r\n"), m_stBarcodePair.byProduct, m_stBarcodePair.byDevice);			
-						DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute unpaired instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
-						m_stBarcodePair.uiCommand = RF_CMD_SCANNER_UNPAIRING;
-						m_stBarcodePair.uiCount = 0;
-						m_stBarcodePair.fLock = true;						
-					}
-					else
-					#endif
-					{
+					
+					//{
 						DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute the %s instruction.\r\n"), m_stBarcodePair.byCommand);
 						m_stBarcodePair.uiCommand = RF_CMD_SCANNER_COMMAND;
 						m_stBarcodePair.uiCount = 0;
 						m_stBarcodePair.fLock = true;						
-					}
+					//}
 					// Set LED status as successful
 					LedSetStatus(OSLS_SUCCEEDED_STATE);
 				}
@@ -784,7 +766,7 @@ void ScannerInputData(TCHAR szInput)
 					// Set LED status as successful
 					LedSetStatus(OSLS_SUCCEEDED_STATE);
 				}
-			
+#endif			
 				// Keep the last state
 				m_uiScannerLastState = SCAN_STAGE_TAG;					
 			}	
@@ -799,6 +781,30 @@ void ScannerInputData(TCHAR szInput)
 				// Keep the last state	
 				m_uiScannerLastState = SCAN_STAGE_STANDBY;
 			}			
+		}	
+		else if (fDeviceID == true)// ESL V1.1: Remove the leading word of "DMTXXXX".
+		{
+			//if (((m_szBarcodeScan[0] == _T('D')) && (m_szBarcodeScan[1] == _T('M')) && 
+			//if ((m_szBarcodeScan[2] == _T('T')) && (
+			if (((m_uiScannerLastState == SCAN_STAGE_PRODUCT) || 
+			#ifdef FLAG_MODE_MULTIPLE_PAIRING				
+							(m_uiScannerLastState == SCAN_STAGE_TAG)|| 
+			#endif
+							(m_uiScannerLastState == SCAN_STAGE_COMMAND) || 
+							(m_uiScannerLastState == SCAN_STAGE_BINDING_HOST) || 
+							(m_uiScannerLastState == SCAN_STAGE_UNBINDING_TAG) || 
+							(m_uiScannerLastState == SCAN_STAGE_CHANGE_DEVICE_ID) || 
+							(m_uiScannerLastState == SCAN_STAGE_DEVICE_REGISTRATION)))
+			{
+
+				pszPos = pszDeviceIdString = m_pszBarcodePos;
+				// Tag		
+				ScannerStringToArray(m_stBarcodePair.byDevice, sizeof(m_stBarcodePair.byDevice), pszPos);
+				ScannerParseTagCommand(pszDeviceIdString);
+			}
+			
+			// Keep the last state
+			m_uiScannerLastState = SCAN_STAGE_TAG;				
 		}
 		else
 		{
@@ -839,6 +845,412 @@ void ScannerInputData(TCHAR szInput)
 		m_szBarcodeScan[0] = 0x00;
 		ERROR_MESSAGE(FLAG_MF_SCANNER, _T("This is an error that occurs when a barcode is too large to be processed by available receive memory.\r\n"));
 	}			
+}
+
+//==============================================================================
+// Function     : ScannerParseTagCommand
+// Purpose      : Processing scanner command
+// Description	: 
+// Editor       : Richard Chung
+// Update Date	: 2018-03-01
+// -----------------------------------------------------------------------------
+// Parameters   : 
+// Return       : 
+// Remarks      : 
+//==============================================================================
+void ScannerParseTagCommand(TCHAR * pszDeviceIdString)
+{
+	if (m_uiScannerLastState == SCAN_STAGE_PRODUCT)
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("%s and %s paired successfully.\r\n"), m_stBarcodePair.byProduct, m_stBarcodePair.byDevice);	
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_PAIRING;
+		m_stBarcodePair.uiCount = 0;
+		m_stBarcodePair.fLock = true;
+	}
+	else if (m_uiScannerLastState == SCAN_STAGE_COMMAND)
+	{
+		
+		//{
+			DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute the %s instruction.\r\n"), m_stBarcodePair.byCommand);
+			m_stBarcodePair.uiCommand = RF_CMD_SCANNER_COMMAND;
+			m_stBarcodePair.uiCount = 0;
+			m_stBarcodePair.fLock = true;						
+		//}
+		// Set LED status as successful
+		LedSetStatus(OSLS_SUCCEEDED_STATE);
+	}
+	//
+	else if (m_uiScannerLastState == SCAN_STAGE_BINDING_HOST)
+	{
+		ESL_DEVICE_ID stDeviceID;
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute the specified host instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		m_stBarcodePair.uiCount = 0;
+		m_stBarcodePair.fLock = false;					
+		//GetHexID((const PTCHAR) m_stBarcodePair.byDevice, &stDeviceID, true);
+		GetHexID(pszDeviceIdString, &stDeviceID, true);
+		SetBindingID(stDeviceID);
+		//RfSetBindingMode(true);					
+		RfSetBeaconMode(OSBM_BEACON_BINDING_MODE);
+		
+		// Set LED status as successful
+		LedSetStatus(OSLS_SUCCEEDED_STATE);					
+	}
+	else if (m_uiScannerLastState == SCAN_STAGE_UNBINDING_TAG)
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("%s and %s unpaired successfully.\r\n"), m_stBarcodePair.byProduct, m_stBarcodePair.byDevice);			
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute unpaired instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_UNPAIRING;
+		m_stBarcodePair.uiCount = 0;
+		m_stBarcodePair.fLock = true;
+		
+		// Set LED status as successful
+		LedSetStatus(OSLS_SUCCEEDED_STATE);	
+	}
+	else if (m_uiScannerLastState == SCAN_STAGE_CHANGE_DEVICE_ID)
+	{
+		ESL_DEVICE_ID stDeviceID;
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute the replacement device ID instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		m_stBarcodePair.uiCount = 0;
+		m_stBarcodePair.fLock = false;
+		
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Device ID string. (%s)\r\n"), pszDeviceIdString);
+		
+		//GetHexID((const PTCHAR) m_stBarcodePair.byDevice, &stDeviceID, true);
+		GetHexID(pszDeviceIdString, &stDeviceID, true);
+		if (ScannerIsValidIdentifier(stDeviceID))
+		{
+			ScannerSetDeviceID(stDeviceID);	
+			INFORMATION_MESSAGE(FLAG_MF_SCANNER, _T("Device ID: %02X:%02X:%02X:%02X:%02X\r\n"), g_stNvmMappingData.stDeviceID.byEFID[0],g_stNvmMappingData.stDeviceID.byEFID[1], g_stNvmMappingData.stDeviceID.byEFID[2], g_stNvmMappingData.stDeviceID.byEFID[3], g_stNvmMappingData.stDeviceID.byEFID[4]);
+		}
+		else
+		{
+			INFORMATION_MESSAGE(FLAG_MF_SCANNER, _T("Device ID is invalid. (%02X:%02X:%02X:%02X:%02X)\r\n"), stDeviceID.byEFID[0], stDeviceID.byEFID[1], stDeviceID.byEFID[2], stDeviceID.byEFID[3], stDeviceID.byEFID[4]);
+		}
+		// Set LED status as successful
+		LedSetStatus(OSLS_SUCCEEDED_STATE);					
+		
+	}
+	else if (m_uiScannerLastState == SCAN_STAGE_DEVICE_REGISTRATION)				
+	{
+		ESL_DEVICE_ID stDeviceID;
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute the device registration instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_REGISTRATION;
+		m_stBarcodePair.uiCount = 0;
+		m_stBarcodePair.fLock = true;
+		
+		//GetHexID((const PTCHAR) m_stBarcodePair.byDevice, &stDeviceID, true);
+		GetHexID(pszDeviceIdString, &stDeviceID, true);
+		//if (ScannerIsValidIdentifier(stDeviceID))
+		//{
+		//	ScannerSetDeviceID(stDeviceID);	
+		//	INFORMATION_MESSAGE(FLAG_MF_SCANNER, _T("Device ID: %02X:%02X:%02X:%02X:%02X\r\n"), g_stNvmMappingData.stDeviceID.byEFID[0],g_stNvmMappingData.stDeviceID.byEFID[1], g_stNvmMappingData.stDeviceID.byEFID[2], g_stNvmMappingData.stDeviceID.byEFID[3], g_stNvmMappingData.stDeviceID.byEFID[4]);
+		//}
+		//else
+		//{
+		//	INFORMATION_MESSAGE(FLAG_MF_SCANNER, _T("Device ID is invalid. (%02X:%02X:%02X:%02X:%02X)\r\n"), stDeviceID.byEFID[0], stDeviceID.byEFID[1], stDeviceID.byEFID[2], stDeviceID.byEFID[3], stDeviceID.byEFID[4]);
+		//}	
+		INFORMATION_MESSAGE(FLAG_MF_SCANNER, _T("Device ID: %02X:%02X:%02X:%02X:%02X\r\n"), stDeviceID.byEFID[0], stDeviceID.byEFID[1], stDeviceID.byEFID[2], stDeviceID.byEFID[3], g_stNvmMappingData.stDeviceID.byEFID[4]);
+		
+		// Set LED status as successful
+		LedSetStatus(OSLS_SUCCEEDED_STATE);
+	}	
+}
+
+
+//==============================================================================
+// Function     : ScannerParseCommand
+// Purpose      : Processing scanner command
+// Description	: 
+// Editor       : Richard Chung
+// Update Date	: 2018-03-01
+// -----------------------------------------------------------------------------
+// Parameters   : 
+// Return       : 
+// Remarks      : 
+//==============================================================================
+void ScannerParseCommand(ESL_BARCODE_VALUE stBarcodeValue)
+{
+	// Command		
+	//ESL_BARCODE_VALUE stBarcodeValue;	
+	
+	// Default Mode
+	if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_SWITCH_DEFAULT_MODE))
+	{
+		ESL_DEVICE_ID stDeviceID;
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute switch to default mode instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		m_stBarcodePair.uiCount = 0;
+		m_stBarcodePair.fLock = false;		
+		RfSetBeaconMode(OSBM_BEACON_SYNC_MODE);
+		memset(&stDeviceID, 0, sizeof(ESL_DEVICE_ID));
+		SetBindingID(stDeviceID);
+
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_STANDBY;					
+	}	
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_AUTO_SCAN_CHANNEL))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Perform automatic detection of channel instructions. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		if (RfIsScanningChannel())
+		{
+			// Stop automatic detection
+			//DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Stop automatic detection.\r\n"));
+			//m_stBarcodePair.fLock = false;	
+			RfSetScanChannel(false);
+		}
+		else
+		{
+			// Start automatic detection
+			//DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Start automatic detection.\r\n"));
+			//m_stBarcodePair.fLock = true;	
+			RfSetScanChannel(true);
+		}
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_CHANNEL;
+	}
+	// Binding Host
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_FORCE_UPPER_HOST))
+	{				
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Perform the specified host instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+
+		// Set the LED to wait for confirmation
+		LedSetStatus(OSLS_SCAN_BARCODE_STATE);					
+	
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_BINDING_HOST;				
+	}	
+	// Unbinding Tag
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_UNPAIRING))
+	{			
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Perform unpaired instruction. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+
+		// Set the LED to wait for confirmation
+		LedSetStatus(OSLS_SCAN_BARCODE_STATE);					
+	
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_UNBINDING_TAG;				
+	}	
+
+	// Change Device ID
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_CHANGE_DEVICE_ID))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Perform a change of device identifier. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+
+		// Set the LED to wait for confirmation
+		LedSetStatus(OSLS_SCAN_BARCODE_STATE);					
+	
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_CHANGE_DEVICE_ID;				
+	}				
+	// Write Configuration to NVM
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_WRITE_CONFIGURATION))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Perform write configuration to NVM instructions. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+
+		// Set the LED to wait for confirmation
+		LedSetStatus(OSLS_SCAN_BARCODE_STATE);
+		
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_WRITE_CONFIGURATION;
+	}	
+	// Enable Encryption Mode
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_ENABLE_ENCRYPTION))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Turn on encryption mode. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		g_stNvmMappingData.fEncryptionMode = true;
+	
+		// Keep the last state
+		//m_uiScannerLastState = SCAN_STAGE_STANDBY;	
+		m_uiScannerLastState = SCAN_STAGE_STANDBY;
+	}	
+	// Disable Encryption Mode
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_DISABLE_ENCRYPTION))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Turn off encryption mode. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		
+		g_stNvmMappingData.fEncryptionMode = false;
+	
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_STANDBY;
+	}	
+
+	// Device Registration
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_DEVICE_REGISTRATION))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Perform device registration. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		
+		// Set the LED to wait for confirmation
+		LedSetStatus(OSLS_SCAN_BARCODE_STATE);
+
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_DEVICE_REGISTRATION;
+	}	
+	
+	// Factory default
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_FACTORY_DEFAULT))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Perform factory default. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		
+		// Set the LED to wait for confirmation
+		LedSetStatus(OSLS_SCAN_BARCODE_STATE);					
+	
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_FACTORY_DEFAULT;
+	}					
+	
+	// Barcode Reader Mode
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_BARCODE_READER_MODE))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Make sure to switch to barcode reader mode. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		
+		// Set the LED to wait for confirmation
+		LedSetStatus(OSLS_SCAN_BARCODE_STATE);					
+	
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_BARCODE_READER_MODE;
+	}					
+	
+	// Barcode Pairing Mode
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_BARCODE_PAIRING_MODE))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Make sure to switch to barcode pairing mode. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		
+		// Set the LED to wait for confirmation
+		LedSetStatus(OSLS_SCAN_BARCODE_STATE);					
+	
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_BARCODE_PAIRING_MODE;
+	}					
+	
+	
+	// Cancel (Used by Scanner) 
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_COMMAND_CANCEL))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Cancel the execution of the command. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		
+		// Set LED status as successful
+		LedSetStatus(OSLS_SUCCEEDED_STATE);
+
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_STANDBY;
+	}	
+	// Confirm (Used by Scanner) 
+	else if (ScannerIsCommandMatch(m_stBarcodePair.byCommand, sizeof(m_stBarcodePair.byCommand), RF_FC_COMMAND_CONFIRM))
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Confirm the execution of the command. (%s)\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		
+		if (m_uiScannerLastState == SCAN_STAGE_WRITE_CONFIGURATION)
+		{
+			// Write configuration
+			m_stBarcodePair.fLock = true;
+			NonVolatileMemoryWriteConfiguration();
+			m_stBarcodePair.fLock = false;	
+		}
+		if (m_uiScannerLastState == SCAN_STAGE_FACTORY_DEFAULT)					
+		{
+			// Reset configuration to default
+			m_stBarcodePair.fLock = true;
+			NonVolatileMemoryFactoryDefault();
+			m_stBarcodePair.fLock = false;
+		}
+		else if (m_uiScannerLastState == SCAN_STAGE_BARCODE_READER_MODE)
+		{
+			// Switch to barcode reader mode
+			m_stBarcodePair.fLock = true;
+			g_stNvmMappingData.wScannerMode = OSSM_BARCODE_READER_MODE;
+			DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Switch to barcode reader mode.\r\n"));	
+			m_stBarcodePair.fLock = false;						
+		}
+		else if (m_uiScannerLastState == SCAN_STAGE_BARCODE_PAIRING_MODE)
+		{
+			// Switch to barcode paring mode
+			m_stBarcodePair.fLock = true;
+			g_stNvmMappingData.wScannerMode = OSSM_BARCODE_PAIRING_MODE;
+			DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Switch to barcode pairing mode.\r\n"));
+			m_stBarcodePair.fLock = false;						
+		}					
+		
+		// Set LED status as successful
+		LedSetStatus(OSLS_SUCCEEDED_STATE);
+
+		// Keep the last state	
+		m_uiScannerLastState = SCAN_STAGE_STANDBY;
+	}		
+	// Change Channe to XXX
+	else if (stBarcodeValue.uiSpecies == 0x0001)
+	{
+		int nChannel = 0;
+		nChannel = stBarcodeValue.uiIdentifier;
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Forced to switch channels to channel %d. (%s)\r\n"), nChannel, m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		if (RfIsScanningChannel())
+		{
+			// Stop automatic detection
+			RfSetScanChannel(false);
+		}		
+		RfSetChannel(nChannel);
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_STANDBY;					
+	}
+	// Force data rate
+	else if (stBarcodeValue.uiSpecies == 0x0002)
+	{
+		int nDataRateIndex = RF_DATARATE_500K;
+		uint32_t nDataRateValue = 500*1024;
+
+		nDataRateValue = stBarcodeValue.uiIdentifier;
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Force data rate to switch to %dK. (%s)\r\n"), nDataRateValue/1024, m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+		switch(nDataRateValue)
+		{
+			case (250*1024):
+				nDataRateIndex = RF_DATARATE_250K;							
+				break;					
+			case (500*1024):
+				nDataRateIndex = RF_DATARATE_500K;
+				break;							
+			case (1024*1024):
+				nDataRateIndex = RF_DATARATE_1M;
+				break;	
+			default:
+				nDataRateIndex = RF_DATARATE_500K;							
+		}
+		
+		RfSetDataRate(nDataRateIndex);
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_STANDBY;							
+	}	
+	// Command 0003-XXXXXXXXXX
+	else if (stBarcodeValue.uiSpecies >= 0x0003)
+	{
+		DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Execute the %s instruction.\r\n"), m_stBarcodePair.byCommand);
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_COMMAND;
+		m_stBarcodePair.uiCount = 0;
+		m_stBarcodePair.fLock = true;						
+	}				
+	else
+	{
+		// Pairing has not been completed
+		m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+	
+		// Keep the last state
+		m_uiScannerLastState = SCAN_STAGE_COMMAND;
+	}	
 }
 
 // Jump to standby mode

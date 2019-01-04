@@ -136,6 +136,9 @@ bool ScannerBarcodeCommandToValue(PTCHAR lpszBarcode, PESL_BARCODE_VALUE pstBarc
 bool ScannerIsCommandMatch(BYTE * pbyDestArray, int nArrayLength, TCHAR * pszSourceText);
 bool ScannerSetDeviceID(ESL_DEVICE_ID stDeviceID);
 
+void ScannerParseTagCommand(TCHAR * pszDeviceIdString);
+void ScannerParseCommand(ESL_BARCODE_VALUE stBarcodeValue);
+
 #ifdef __cplusplus
 }
 #endif

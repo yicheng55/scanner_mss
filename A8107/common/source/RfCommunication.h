@@ -193,7 +193,6 @@
 #define RF_FC_CHANGE_DEVICE_ID                  _T("0000-0000000004")       // Change Device ID (Used by Scanner)
 #define RF_FC_WRITE_CONFIGURATION               _T("0000-0000000005")       // Write Configuration to NVM (Used by Scanner)
 #define RF_FC_AUTO_SCAN_CHANNEL                 _T("0000-0000000006")       // Auto Scan Channel
-//#define RF_FC_CHANNEL_SCAN                        _T("0001-0000000000")       // Scan Channel (Used by Scanner)
 #define RF_FC_ENABLE_ENCRYPTION                 _T("0000-0000000007")       // Enable Encryption Mode
 #define RF_FC_DISABLE_ENCRYPTION                _T("0000-0000000008")       // Disable Encryption Mode
 
@@ -221,7 +220,6 @@
 // Scanner Command
 // Adjust the Scanner's RF Frequency (40~60, 92~104)  (Force the channel)
 //
-//#define RF_FC_CHANNEL_SCAN                        _T("0001-0000000000")       // Scan Channel (Used by Scanner)
 #define RF_FC_CHANNEL_040                       _T("0001-0000000028")   // Channel 40(0x28)  (Used by Scanner)
 //...
 #define RF_FC_CHANNEL_060                       _T("0001-000000003C")   // Channel 60(0x3C)
@@ -308,7 +306,7 @@ typedef struct _ESL_COMMON_HEADER
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
     uint8_t byCommand;                          // Command: RF_CMD_SCANNER_PAIRING, RF_CMD_SCANNER_UNPAIRING, RF_CMD_CONFIRMED_ACK, etc...
     //--- Externsion Data ---
-    uint8_t ExtensionData[1];                   // Extension Data
+    uint8_t byExtensionData[1];                   // Extension Data
 } ESL_COMMON_HEADER, *PESL_COMMON_HEADER;
 
 #if 0
@@ -406,9 +404,9 @@ typedef struct _ESL_COMMON_PACKET
     uint8_t bySequenceNumber;                   // Sequence Number
     uint8_t byPacketType;                       // Packet Type: RF_PT_SCANNER_PACKET
     uint8_t byCommand;                          // Command: RF_CMD_SCANNER_PAIRING, RF_CMD_SCANNER_UNPAIRING, RF_CMD_CONFIRMED_ACK, etc...
-    uint8_t byDeviceID[MAX_DEVICE_EUSI];                      // Scanner ID/Tag ID/etc...
-    uint8_t byGatewayID[MAX_DEVICE_EUSI];                     // Gateway ID
-    uint8_t byRepeaterID[MAX_DEVICE_EUSI];                    // Repeater ID
+    uint8_t byDeviceID[MAX_DEVICE_EUSI];        // Scanner ID/Tag ID/etc...
+    uint8_t byGatewayID[MAX_DEVICE_EUSI];       // Gateway ID
+    uint8_t byRepeaterID[MAX_DEVICE_EUSI];      // Repeater ID
     //--- Externsion Data ---
     uint8_t ExtensionData[1];                   // Extension Data
 } ESL_COMMON_PACKET, *PESL_COMMON_PACKET;
