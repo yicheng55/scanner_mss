@@ -1043,7 +1043,7 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 		{
 			if ((m_stBindingID.stComboID.byEUSI[0] != pstSyncBeacon->byGatewayID[0]) ||
 				(m_stBindingID.stComboID.byEUSI[1] != pstSyncBeacon->byGatewayID[1]) ||
-				(m_stBindingID.stComboID.byEUSI[1] != pstSyncBeacon->byGatewayID[2]))
+				(m_stBindingID.stComboID.byEUSI[2] != pstSyncBeacon->byGatewayID[2]))
 			{
 				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Synchronization signal of unsynchronized gateway(%02X-%02X-%02X).\r\n"), 
 				pstSyncBeacon->byGatewayID[0], pstSyncBeacon->byGatewayID[1], pstSyncBeacon->byGatewayID[2]);
@@ -1076,7 +1076,9 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 			return ERROR_SUCCESS;
 		}
 		m_uiBeaconTickCount = GetTickCount();
+
 	}	
+
 	
 	switch (uiCommand)
 	{
@@ -1148,7 +1150,7 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 		}
 		// Send Command Mode
 		else if (ScannerIsCommand())
-		{
+		{	
 			LedSetStatus(OSLS_TRANSMISSION_STATE);
 			memcpy(m_stGatewayID.stComboID.byEUSI, pstSyncBeacon->byGatewayID, sizeof(m_stGatewayID.stComboID.byEUSI));
 			memcpy(m_stRepeaterID.stComboID.byEUSI, pstSyncBeacon->byRepeaterID, sizeof(m_stRepeaterID.stComboID.byEUSI));
@@ -1178,11 +1180,17 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 		}
 		// Send Barcode Mode
 		else if (ScannerIsBarcode())
-		{
-			LedSetStatus(OSLS_TRANSMISSION_STATE);
+		{ 
+			// Original:
+			// LedSetStatus(OSLS_TRANSMISSION_STATE);
+			//
+			// Modified
+			if (g_stNvmMappingData.wScannerMode == OSSM_BARCODE_READER_MODE)
+				LedSetStatus(OSLS_TRANSMISSION_STATE);
 			memcpy(m_stGatewayID.stComboID.byEUSI, pstSyncBeacon->byGatewayID, sizeof(m_stGatewayID.stComboID.byEUSI));
 			memcpy(m_stRepeaterID.stComboID.byEUSI, pstSyncBeacon->byRepeaterID, sizeof(m_stRepeaterID.stComboID.byEUSI));
-			uiResult = ScannerSendBarcode();
+			uiResult = ScannerSendBarcode(); 
+			
 			switch(uiResult)
 			{	
 			case ERROR_SUCCESS:
@@ -1204,7 +1212,16 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("ScannerSendBarcode: 0x%02X\r\n"), uiResult);
 				uiResult = ERROR_SUCCESS;	
 				break;
-			}					
+			}
+			
+			//
+			//
+			//
+			if (g_stNvmMappingData.wScannerMode == OSSM_BARCODE_DEFAULT_MODE) 
+			{
+				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Sync\r\n"));
+				LedSetStatus(OSLS_ONLINE_STATE);				
+			}	
 		}
 		else
 		{

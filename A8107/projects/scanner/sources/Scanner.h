@@ -92,8 +92,9 @@
 #define SCAN_STAGE_WRITE_CONFIGURATION		0x00000008							// Write configuration to NVM
 #define SCAN_STAGE_DEVICE_REGISTRATION		0x00000009							// Device Registration	
 #define SCAN_STAGE_FACTORY_DEFAULT			0x0000000A							// Factory Default	
-#define SCAN_STAGE_BARCODE_READER_MODE		0x0000000B							// Barcode Reader Mode 	
-#define SCAN_STAGE_BARCODE_PAIRING_MODE		0x0000000C							// Barcode Pairing Mode 	
+#define SCAN_STAGE_BARCODE_DEFAULT_MODE		0x0000000B							// Barcode Default Mode 	
+#define SCAN_STAGE_BARCODE_PAIRING_MODE		0x0000000C							// Barcode Pairing Mode 
+#define SCAN_STAGE_BARCODE_READER_MODE		0x0000000D							// Barcode Reader Mode 	
 
 //==============================================================================
 //--- Declarative Functions ---
@@ -136,7 +137,8 @@ bool ScannerBarcodeCommandToValue(PTCHAR lpszBarcode, PESL_BARCODE_VALUE pstBarc
 bool ScannerIsCommandMatch(BYTE * pbyDestArray, int nArrayLength, TCHAR * pszSourceText);
 bool ScannerSetDeviceID(ESL_DEVICE_ID stDeviceID);
 
-void ScannerParseTagCommand(TCHAR * pszDeviceIdString);
+//void ScannerParseTagCommand(TCHAR * pszDeviceIdString);
+void ScannerParseTagCommand(ESL_DEVICE_ID stDeviceID);
 void ScannerParseCommand(ESL_BARCODE_VALUE stBarcodeValue);
 
 #ifdef __cplusplus

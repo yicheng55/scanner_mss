@@ -182,8 +182,9 @@
 //==============================================================================
 //--- Declarative Scanner Mode ---
 //==============================================================================
-#define OSSM_BARCODE_READER_MODE			0
-#define OSSM_BARCODE_PAIRING_MODE			1
+#define OSSM_BARCODE_DEFAULT_MODE			0	// Automatically transfer barcodes and pairing information.
+#define OSSM_BARCODE_PAIRING_MODE			1   // Transfer pairing information.
+#define OSSM_BARCODE_READER_MODE			2   // Transfer barcodes information.
 
 //==============================================================================
 //--- Declarative Beacon Mode ---
@@ -199,9 +200,9 @@
 typedef struct _ESL_DEVICE_STATUS_
 {
 	ESL_DEVICE_ID 	stDeviceID;			// Self Device Identifier
-	ESL_DEVICE_ID 	stGatewayID;		// 	
-	ESL_DEVICE_ID 	stRepeaterD;		//
-	uint8_t      	uiChannel;			//
+	ESL_DEVICE_ID 	stGatewayID;		// 
+	ESL_DEVICE_ID 	stRepeaterD;		// 
+	uint8_t      	uiChannel;			// 
 	uint8_t 		uiRssi;				// 
 	DAVICOM_VERSION stVersion;			// 
 	uint16_t      	uiUpdate;			// UPDATE_COUNT; 

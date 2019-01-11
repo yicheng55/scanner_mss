@@ -212,7 +212,8 @@ typedef struct _BARCODE_PAIR
 	uint8_t uiCommand;							// Pair command
 	uint8_t uiCount;							// Send Count
 	bool fLock;									// Scanner Lock
-	BYTE byDevice[MAX_BARCODE_TAG];				// Device Barcode
+	bool fSendBarcode;							// Send Barcode
+	BYTE byDevice[MAX_BARCODE_TAG];				// Device Barcode (Ex.XXXX-1234567890/1234567890)
 	uint32_t uiSendingTime;						// Sending time
 	union
 	{

@@ -198,8 +198,9 @@
 
 #define RF_FC_DEVICE_REGISTRATION               _T("0000-0000000009")       // Device Registration
 #define RF_FC_FACTORY_DEFAULT                   _T("0000-000000000A")       // Factory default (Configuration)
-#define RF_FC_BARCODE_READER_MODE               _T("0000-000000000B")       // Barcode Reader Mode
+#define RF_FC_BARCODE_DEFAULT_MODE              _T("0000-000000000B")       // Barcode Default Mode
 #define RF_FC_BARCODE_PAIRING_MODE              _T("0000-000000000C")       // Barcode Pairing Mode
+#define RF_FC_BARCODE_READER_MODE               _T("0000-000000000D")       // Barcode Reader Mode
 //#define RF_FC_GATEWAY_REGISTRATION            _T("0000-0000000008")       // Registration
 //#define RF_FC_REPEATER_REGISTRATION           _T("0000-0000000008")       // Registration
 //#define RF_FC_SCANNER_REGISTRATION            _T("0000-0000000008")       // Registration

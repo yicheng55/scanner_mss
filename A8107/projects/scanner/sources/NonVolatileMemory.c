@@ -21,7 +21,7 @@ ESL_NVM_DATA g_stNvmMappingData;
 const ESL_NVM_DATA g_stNvmData __attribute__((at(FLASH_ADDRESS_SCANNER_NVM))) = 
 	{
 		FLASH_MAGIC_CODE, 			// Magic Code
-		OSSM_BARCODE_READER_MODE,	// Scanner Mode
+		OSSM_BARCODE_DEFAULT_MODE,	// Scanner Mode
 		RF_DEFAULT_ENCRYPTION_MODE, // RF Encrption Mode
 		RF_DEFAULT_CHANNEL,			// RF Channel
 		RF_DEFAULT_DATARATE,			// RF Data Rate
@@ -37,7 +37,7 @@ const ESL_NVM_DATA g_stNvmData __attribute__((at(FLASH_ADDRESS_SCANNER_NVM))) =
 const ESL_NVM_DATA g_stNvmData __attribute__((at(FLASH_ADDRESS_SCANNER_NVM))) = 
 	{
 		FLASH_MAGIC_CODE, 			// Magic Code
-		OSSM_BARCODE_READER_MODE,	// Scanner Mode
+		OSSM_BARCODE_DEFAULT_MODE,	// Scanner Mode
 		RF_DEFAULT_ENCRYPTION_MODE, // RF Encrption Mode
 		RF_DEFAULT_CHANNEL,			// RF Channel
 		RF_DEFAULT_DATARATE,			// RF Data Rate
@@ -150,7 +150,7 @@ bool NonVolatileMemoryFactoryDefault()
 	uint8_t szManufacturer[MAX_MANUFACTURER_SIZE] = {TEXT_MANUFACTURER_NAME}; 	// 64 Byes, Davicom Semiconductor, Inc.	
 	
 	g_stNvmMappingData.wMagicCode = FLASH_MAGIC_CODE;	
-	g_stNvmMappingData.wScannerMode = OSSM_BARCODE_READER_MODE;		
+	g_stNvmMappingData.wScannerMode = OSSM_BARCODE_DEFAULT_MODE;		
 	g_stNvmMappingData.fEncryptionMode = RF_DEFAULT_ENCRYPTION_MODE;
 	g_stNvmMappingData.uiChannel = RF_DEFAULT_CHANNEL;
 	g_stNvmMappingData.uiDataRate = RF_DEFAULT_DATARATE;
