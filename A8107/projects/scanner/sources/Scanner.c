@@ -498,6 +498,7 @@ void ScannerInputData(TCHAR szInput)
 				m_stBarcodePair.fLock = true;				
 				m_stBarcodePair.fSendBarcode = true;
 			
+				LedSetStatus(OSLS_STANDBY_STATE);		// Set LED to standby
 				// Keep the last state	
 				m_uiScannerLastState = SCAN_STAGE_STANDBY;				
 			}			
@@ -954,6 +955,7 @@ void ScannerResetToStandbyMode(void)
 	m_stBarcodePair.uiCount = 0;
 	m_stBarcodePair.uiSendingTime = 0;
 	m_stBarcodePair.fLock = false;
+	m_stBarcodePair.fSendBarcode = false;	
 }
 
 uint32_t ScannerSendPairing()
