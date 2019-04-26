@@ -1219,7 +1219,7 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 			//
 			if (g_stNvmMappingData.wScannerMode == OSSM_BARCODE_DEFAULT_MODE) 
 			{
-				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Sync\r\n"));
+				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Sync_DEFAULT\r\n"));
 				LedSetStatus(OSLS_ONLINE_STATE);				
 			}	
 		}
