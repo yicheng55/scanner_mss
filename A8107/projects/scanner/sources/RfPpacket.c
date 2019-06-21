@@ -298,8 +298,10 @@ bool RfIsBeaconSyncTimeout(void)
 	return false;
 }
 
+extern void ScannerResetToStandbyMode(void);
 void RfResetBindingID(void)
 {
+//	ScannerResetToStandbyMode();  201-06-21 added.
 	memset(&m_stBindingID, 0, sizeof(m_stBindingID));
 }
 
@@ -911,8 +913,9 @@ uint32_t RfCommunicationProcedure(uint32_t uiMessage, LPVOID lpParam1, LPVOID lp
 		case RF_PT_UPDATE_STATUS_REPORT:
 			break;			
 		case RF_PT_SCANNER_PACKET:
-			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply"));
+			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply "));
 			uiResult = RfOnScannerPacket(pstCommon->byCommand, (PESL_COMMON_PACKET) pstCommon);
+//				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply Test."));
 			break;
         // 
         // Process other messages. 
@@ -1225,7 +1228,7 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 		}
 		else
 		{
-			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Sync\r\n"));
+			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T(" Sync\r\n"));
 			//uiResult = ESL_MSG_BEACON_SYNC;
 			LedSetStatus(OSLS_ONLINE_STATE);
 		}
@@ -1240,7 +1243,7 @@ uint32_t RfOnScannerPacket(uint32_t uiCommand, PESL_COMMON_PACKET pstPacket)
 {
 	uint32_t uiResult = ERROR_SUCCESS;	
 	PESL_REPLY_PACKET pstReply = (PESL_REPLY_PACKET) pstPacket;
-	DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply"));
+	DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply "));
 	switch (uiCommand)
 	{			
 		case RF_CMD_SCANNER_CONFIRMED_ACK:	
@@ -1373,7 +1376,7 @@ uint32_t RfGetPacket(LPBYTE lpbyBuffer, uint8_t uiBufferSize, uint8_t uiPayloadL
 					}
 
 					// Show Packet Information
-					//SHOW_RECEIVE_PACKET(lpbyBuffer, uiPayloadLength);
+//					SHOW_RECEIVE_PACKET(lpbyBuffer, uiPayloadLength);
 					uiResult = RfCommunicationProcedure(pstCommon->byPacketType, (LPVOID) lpbyBuffer, NULL);			
 				}
 				//else

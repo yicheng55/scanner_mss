@@ -9,10 +9,15 @@
 /* Reference    :                                                               */
 /* Copyright    : (c) Davicom Semiconductor Inc. All Rights Reserved.           */
 /* -----------------------------------------------------------------------------*/
-/* Version      : 1.0.0.0                                                       */
+/* Version      : 0.0.0.5                                                       */
 /* Update       : 2018-03-01                                                    */
 /* Modified     : Richard Chung                                                 */
 /* Description	:                                                               */
+/* -----------------------------------------------------------------------------*/
+/* Version      : 0.0.0.6                                                       */
+/* Update       : 2019-06-21                                                    */
+/* Modified     : Yi-Cheng                                                      */
+/* Description	: Resend Barcode mode.                                                             */
 /* -----------------------------------------------------------------------------*/
 /* How to use:                                                                  */
 /*                                                                              */

@@ -949,7 +949,7 @@ void ScannerParseCommand(ESL_BARCODE_VALUE stBarcodeValue)
 // Jump to standby mode
 void ScannerResetToStandbyMode(void)
 {
-	DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Reset to standby mode\r\n"));
+	DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Reset to standby mode.\r\n"));
 	m_uiScannerLastState = SCAN_STAGE_STANDBY;
 	m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;	
 	m_stBarcodePair.uiCount = 0;
@@ -1067,7 +1067,7 @@ uint32_t ScannerSendBarcode()
 		if (g_stNvmMappingData.wScannerMode == OSSM_BARCODE_READER_MODE)
 			SetMachineState(OSMS_WAITTING_RESULT_STATE);
 		
-		m_stBarcodePair.fSendBarcode = false;
+//		m_stBarcodePair.fSendBarcode = false;				//2019-06-21  del. Resend Barcode mode.
 		
 		uiResult = ERROR_SUCCESS;		
 	}
