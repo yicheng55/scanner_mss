@@ -19,6 +19,11 @@
 /* Modified     : Yi-Cheng                                                      */
 /* Description	: Resend Barcode mode.                                                             */
 /* -----------------------------------------------------------------------------*/
+/* Version      : 0.0.1.0                                                       */
+/* Update       : 2019-08-13                                                    */
+/* Modified     : Yi-Cheng                                                      */
+/* Description	: Sacnner Auto mode update.                                                             */
+/* -----------------------------------------------------------------------------*/
 /* How to use:                                                                  */
 /*                                                                              */
 #ifndef _MAIN_H_
