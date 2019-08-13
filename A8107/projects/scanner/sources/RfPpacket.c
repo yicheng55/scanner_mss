@@ -913,7 +913,7 @@ uint32_t RfCommunicationProcedure(uint32_t uiMessage, LPVOID lpParam1, LPVOID lp
 		case RF_PT_UPDATE_STATUS_REPORT:
 			break;			
 		case RF_PT_SCANNER_PACKET:
-			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply "));
+			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply. \r\n"));
 			uiResult = RfOnScannerPacket(pstCommon->byCommand, (PESL_COMMON_PACKET) pstCommon);
 //				DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply Test."));
 			break;
@@ -1243,7 +1243,7 @@ uint32_t RfOnScannerPacket(uint32_t uiCommand, PESL_COMMON_PACKET pstPacket)
 {
 	uint32_t uiResult = ERROR_SUCCESS;	
 	PESL_REPLY_PACKET pstReply = (PESL_REPLY_PACKET) pstPacket;
-	DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply "));
+//	DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet Reply: \r\n"));
 	switch (uiCommand)
 	{			
 		case RF_CMD_SCANNER_CONFIRMED_ACK:	
@@ -1264,7 +1264,7 @@ uint32_t RfOnScannerPacket(uint32_t uiCommand, PESL_COMMON_PACKET pstPacket)
 			uiResult = ERROR_SUCCESS;
 			break;
 		default:
-			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet: %02X"), pstReply->byCommand);
+			DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("Scanner Packet: %02X \r\n"), pstReply->byCommand);
 			break;
 	}	
 	return uiResult;

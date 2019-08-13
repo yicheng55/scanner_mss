@@ -81,17 +81,17 @@
 //--- Declarative Scanner Stage ---
 //------------------------------------------------------------------------------
 #define SCAN_STAGE_STANDBY					0x00000000
-#define SCAN_STAGE_TAG						0x00000001
+#define SCAN_STAGE_TAG							0x00000001
 #define SCAN_STAGE_PRODUCT					0x00000002
 //--- COMMADN ---
-#define SCAN_STAGE_COMMAND					0x00000003
+#define SCAN_STAGE_COMMAND						0x00000003
 #define SCAN_STAGE_BINDING_HOST				0x00000004
 #define SCAN_STAGE_UNBINDING_TAG			0x00000005	
-#define SCAN_STAGE_CHANNEL					0x00000006							// Channel detection
-#define SCAN_STAGE_CHANGE_DEVICE_ID			0x00000007							// Change device identifier
+#define SCAN_STAGE_CHANNEL						0x00000006							// Channel detection
+#define SCAN_STAGE_CHANGE_DEVICE_ID				0x00000007							// Change device identifier
 #define SCAN_STAGE_WRITE_CONFIGURATION		0x00000008							// Write configuration to NVM
 #define SCAN_STAGE_DEVICE_REGISTRATION		0x00000009							// Device Registration	
-#define SCAN_STAGE_FACTORY_DEFAULT			0x0000000A							// Factory Default	
+#define SCAN_STAGE_FACTORY_DEFAULT				0x0000000A							// Factory Default	
 #define SCAN_STAGE_BARCODE_DEFAULT_MODE		0x0000000B							// Barcode Default Mode 	
 #define SCAN_STAGE_BARCODE_PAIRING_MODE		0x0000000C							// Barcode Pairing Mode 
 #define SCAN_STAGE_BARCODE_READER_MODE		0x0000000D							// Barcode Reader Mode 	
