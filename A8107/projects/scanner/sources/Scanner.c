@@ -429,7 +429,7 @@ void ScannerInputData(TCHAR szInput)
 			}	
 			else
 			{
-				m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
+//				m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;
 				DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Bad Request: %s\r\n"), m_szBarcodeScan);
 				
 				// Pairing has not been completed
@@ -459,10 +459,16 @@ void ScannerInputData(TCHAR szInput)
 				ScannerStringToArray(m_stBarcodePair.byDevice, sizeof(m_stBarcodePair.byDevice), pszPos);
 				GetHexID(pszDeviceIdString, &stDeviceID, true);
 				ScannerParseTagCommand(stDeviceID);
+				
+				// Keep the last state
+				m_uiScannerLastState = SCAN_STAGE_TAG;						
 			}
-			
-			// Keep the last state
-			m_uiScannerLastState = SCAN_STAGE_TAG;				
+			else
+			{
+				DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Bad Request: %s\r\n"), m_szBarcodeScan);
+				// Keep the last state
+				m_uiScannerLastState = SCAN_STAGE_STANDBY;				
+			}
 		}
 		else
 		{
