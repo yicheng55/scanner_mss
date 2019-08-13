@@ -1190,6 +1190,7 @@ uint32_t RfOnBeaconSync(uint32_t uiCommand, PSYNC_BEACON pstSyncBeacon)
 			// Modified
 			if (g_stNvmMappingData.wScannerMode == OSSM_BARCODE_READER_MODE)
 				LedSetStatus(OSLS_TRANSMISSION_STATE);
+			
 			memcpy(m_stGatewayID.stComboID.byEUSI, pstSyncBeacon->byGatewayID, sizeof(m_stGatewayID.stComboID.byEUSI));
 			memcpy(m_stRepeaterID.stComboID.byEUSI, pstSyncBeacon->byRepeaterID, sizeof(m_stRepeaterID.stComboID.byEUSI));
 			uiResult = ScannerSendBarcode(); 
