@@ -25,7 +25,7 @@ uint8_t m_uiIndex = 0;								// LED value index
 //#define OSLI_CYCLE_TIME						1
 //#define OSLI_DATA_SIZE						2
 //#define OSLI_DATA_BEGIN						3~
-const uint32_t m_uiStatus[][11] = {
+const uint32_t m_uiStatus[][13] = {
 	{ 250, 1000, 2, 0x03, 0x00}, 				// Power On
 	{ 1000, 1000, 1, 0x01},						// Online
 	{ 100, 800, 8, 0x03, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00},	// Scan barcode/Scan action		
@@ -34,7 +34,7 @@ const uint32_t m_uiStatus[][11] = {
 	{ 1000, 1000, 1, 0x01},						// Succeeded (ACK)
 	{ 1000, 1000, 1, 0x02},						// Failed
 	{ 500, 1000, 2, 0x03, 0x00},				// No Device ID
-	{ 200, 3200, 8, 0x02, 0x00, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00},	//  Predicted failure		
+	{ 200, 4000, 10, 0x02, 0x00, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00},	//  Predicted failure		
 //	{ 500, 1500, 3, 0x03, 0x00, 0x00},			// Predicted failure
 	{ 3000, 12000, 4, 0x01, 0x00, 0x02, 0x00},	// Spun down
 	{ 250, 2000, 8, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},// Standby	
@@ -59,6 +59,27 @@ void Led()
 	m_uiCurrentState = OSLS_POWER_ON_STATE;
 	m_uiNextStatus = OSLS_POWER_ON_STATE;	
 	m_uiCycleTime = 0;
+}
+
+
+//==============================================================================
+// Function     : LedReSetStatus
+// Purpose      : ReSet the state of the LED
+// Description	: ReSet the next state of the LED
+// Editor       : yi-cheng
+// Update Date	: 2019-08-15
+// -----------------------------------------------------------------------------
+// Parameters   : 
+// Return       : 
+// Remarks      : 
+//==============================================================================
+void LedReSetStatus(uint8_t uiStatus)
+{
+
+		m_uiCurrentState = uiStatus;
+		m_uiCycleTime = 0;
+		m_uiIndex = 0;	
+//	DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("m_uiCurrentState: %d.\r\n"), m_uiCurrentState);
 }
 
 //==============================================================================

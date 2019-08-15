@@ -532,7 +532,9 @@ void ScannerInputData(TCHAR szInput)
 				if (m_uiScannerLastState == SCAN_STAGE_PRODUCT)
 				{
 					DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("%s\r\n"), " Product_Binding_TAG");			
-
+					LedReSetStatus(OSLS_IDENTIFIED_STATE);
+//					LedSetStatus(OSLS_IDENTIFIED_STATE);		// Set LED to OSLS_IDENTIFIED_STATE			
+					
 //					ESL_DEVICE_ID stDeviceID;			
 //					m_uiScannerLastState = SCAN_STAGE_PRODUCT;								
 					ScannerParseTagCommand(stDeviceID);										
@@ -544,17 +546,22 @@ void ScannerInputData(TCHAR szInput)
 					m_stBarcodePair.uiCount = 0;
 					m_stBarcodePair.fLock = true;				
 					m_stBarcodePair.fSendBarcode = true;
-				
+					
+					LedReSetStatus(OSLS_IDENTIFIED_STATE);
+//					LedSetStatus(OSLS_IDENTIFIED_STATE);		// Set LED to OSLS_IDENTIFIED_STATE								
 					// Keep the last state	
 					m_uiScannerLastState = SCAN_STAGE_STANDBY;						
 					
 				}
+	
 			}			
 			else if (g_stNvmMappingData.wScannerMode == OSSM_BARCODE_PAIRING_MODE)
 			{
 				if (m_uiScannerLastState == SCAN_STAGE_PRODUCT)
 				{				
-				
+					LedReSetStatus(OSLS_IDENTIFIED_STATE);
+//					LedSetStatus(OSLS_IDENTIFIED_STATE);		// Set LED to OSLS_IDENTIFIED_STATE			
+					
 					DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("%s\r\n"), " PAIRING_Binding_TAG");			
 				// Keep the last state	
 //					m_uiScannerLastState = SCAN_STAGE_PRODUCT;
@@ -576,7 +583,8 @@ void ScannerInputData(TCHAR szInput)
 				m_stBarcodePair.fLock = true;				
 				m_stBarcodePair.fSendBarcode = true;
 			
-				LedSetStatus(OSLS_STANDBY_STATE);		// Set LED to standby
+					LedReSetStatus(OSLS_IDENTIFIED_STATE);
+//					LedSetStatus(OSLS_IDENTIFIED_STATE);		// Set LED to OSLS_IDENTIFIED_STATE			
 				// Keep the last state	
 				m_uiScannerLastState = SCAN_STAGE_STANDBY;				
 			}			
