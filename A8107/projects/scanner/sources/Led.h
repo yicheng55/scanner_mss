@@ -115,6 +115,7 @@ void Led(void);
 //--- Declarative Public Functions ---
 //------------------------------------------------------------------------------
 void LedSetStatus(uint8_t uiStatus);	// Set LED State
+void LedReSetStatus(uint8_t uiStatus);
 
 //------------------------------------------------------------------------------
 //--- Declarative Callback Functions ---
