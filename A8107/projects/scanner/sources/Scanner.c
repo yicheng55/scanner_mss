@@ -455,7 +455,7 @@ void ScannerInputData(TCHAR szInput)
 					
 					// Pairing has not been completed
 					m_stBarcodePair.uiCommand = RF_CMD_SCANNER_STANDBY;				
-					LedSetStatus(OSLS_FAILED_STATE);		// Set LED to OSLS_PREDICTED_STATE
+					LedSetStatus(OSLS_PREDICTED_STATE);		// Set LED to OSLS_PREDICTED_STATE
 					
 					// Keep the last state
 					m_uiScannerLastState = SCAN_STAGE_STANDBY;				
@@ -514,7 +514,7 @@ void ScannerInputData(TCHAR szInput)
 				else
 				{
 					DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Bad Request: %s\r\n"), pszPos);
-					LedSetStatus(OSLS_FAILED_STATE);		// Set LED to OSLS_PREDICTED_STATE				
+					LedSetStatus(OSLS_PREDICTED_STATE);		// Set LED to OSLS_PREDICTED_STATE				
 					
 					// Keep the last state
 					m_uiScannerLastState = SCAN_STAGE_STANDBY;						
@@ -563,7 +563,7 @@ void ScannerInputData(TCHAR szInput)
 				else
 				{			
 					DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Bad Request: %s\r\n"), pszPos);
-					LedSetStatus(OSLS_FAILED_STATE);		// Set LED to OSLS_PREDICTED_STATE
+					LedSetStatus(OSLS_PREDICTED_STATE);		// Set LED to OSLS_PREDICTED_STATE
 					// Keep the last state
 					m_uiScannerLastState = SCAN_STAGE_STANDBY;			
 				}					

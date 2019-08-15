@@ -20,6 +20,11 @@ uint8_t m_uiNextStatus = OSLS_POWER_ON_STATE;
 uint32_t m_uiCycleTime = 0;							// State cycle time
 uint8_t m_uiIndex = 0;								// LED value index 
 
+//// Operating system led array index
+//#define OSLI_INTERVAL_TIME				0
+//#define OSLI_CYCLE_TIME						1
+//#define OSLI_DATA_SIZE						2
+//#define OSLI_DATA_BEGIN						3~
 const uint32_t m_uiStatus[][11] = {
 	{ 250, 1000, 2, 0x03, 0x00}, 				// Power On
 	{ 1000, 1000, 1, 0x01},						// Online
@@ -29,7 +34,7 @@ const uint32_t m_uiStatus[][11] = {
 	{ 1000, 1000, 1, 0x01},						// Succeeded (ACK)
 	{ 1000, 1000, 1, 0x02},						// Failed
 	{ 500, 1000, 2, 0x03, 0x00},				// No Device ID
-	{ 200, 800, 8, 0x02, 0x00, 0x02, 0x00, 0x02, 0x00, 0x02, 0x00},	//  Predicted failure		
+	{ 200, 3200, 8, 0x02, 0x00, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00},	//  Predicted failure		
 //	{ 500, 1500, 3, 0x03, 0x00, 0x00},			// Predicted failure
 	{ 3000, 12000, 4, 0x01, 0x00, 0x02, 0x00},	// Spun down
 	{ 250, 2000, 8, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},// Standby	
@@ -83,7 +88,7 @@ void LedSetStatus(uint8_t uiStatus)
 	{
 		m_uiNextStatus = uiStatus;
 	}			
-	//DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("m_uiNextStatus: %d.\r\n"), m_uiNextStatus);
+//	DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("m_uiNextStatus: %d.\r\n"), m_uiNextStatus);
 }
 
 //==============================================================================
@@ -156,14 +161,14 @@ void LedShowStatus()
 		INFORMATION_MESSAGE(FLAG_MF_SCANNER, _T("Device ID: %02X:%02X:%02X:%02X:%02X\r\n"), g_stNvmMappingData.stDeviceID.byEFID[0],g_stNvmMappingData.stDeviceID.byEFID[1], g_stNvmMappingData.stDeviceID.byEFID[2], g_stNvmMappingData.stDeviceID.byEFID[3], g_stNvmMappingData.stDeviceID.byEFID[4]);
 	}	*/
 
-	if ((m_uiCycleTime%uiIntervalTime) == 0)
+	if ((m_uiCycleTime % uiIntervalTime) == 0)
 	{
 		uint8_t uiDataSize = m_uiStatus[m_uiCurrentState][OSLI_DATA_SIZE];
 		uint32_t uiStatus;		
 		if (m_uiIndex > uiDataSize-1)
 			m_uiIndex = 0;
 		uiStatus = m_uiStatus[m_uiCurrentState][OSLI_DATA_BEGIN + m_uiIndex];
-		//INFORMATION_MESSAGE(FLAG_MF_SCANNER, _T("Current = %0d, uiDataSize = %d, uiIntervalTime = %d, uiCycleTime = %d, uiStatus(%d) = 0x%02X\r\n"), m_uiCurrentState, uiDataSize, uiIntervalTime, uiCycleTime, m_uiIndex, uiStatus);
+//		INFORMATION_MESSAGE(FLAG_MF_SCANNER, _T("Current = %0d, uiDataSize = %d, uiIntervalTime = %d, uiCycleTime = %d, uiStatus(%d) = 0x%02X\r\n"), m_uiCurrentState, uiDataSize, uiIntervalTime, uiCycleTime, m_uiIndex, uiStatus);
 		LedSetValue(uiStatus);
 		m_uiIndex++;	
 	}
@@ -171,6 +176,7 @@ void LedShowStatus()
 	if (m_uiCycleTime >= uiCycleTime)
 	{
 		m_uiCycleTime = 0;
+		m_uiIndex = 0;
 		if (m_uiNextStatus != OSLS_STANDBY_STATE)
 		{
 			m_uiCurrentState = m_uiNextStatus;
