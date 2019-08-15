@@ -524,6 +524,7 @@ void ScannerInputData(TCHAR szInput)
 		}
 		else
 		{
+			pszPos = pszDeviceIdString = m_pszBarcodePos;									
 			ScannerStringToArray(m_stBarcodePair.byProduct, sizeof(m_stBarcodePair.byProduct), m_szBarcodeScan);
 			DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Product: %s\r\n"), m_stBarcodePair.byProduct);	
 			
