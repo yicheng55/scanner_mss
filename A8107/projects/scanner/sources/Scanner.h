@@ -95,7 +95,6 @@
 #define SCAN_STAGE_BARCODE_DEFAULT_MODE		0x0000000B							// Barcode Default Mode 	
 #define SCAN_STAGE_BARCODE_PAIRING_MODE		0x0000000C							// Barcode Pairing Mode 
 #define SCAN_STAGE_BARCODE_READER_MODE		0x0000000D							// Barcode Reader Mode 	
-#define SCAN_STAGE_BINDING_TAG						0x0000000E
 
 //==============================================================================
 //--- Declarative Functions ---

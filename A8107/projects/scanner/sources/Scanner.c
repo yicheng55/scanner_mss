@@ -436,8 +436,8 @@ void ScannerInputData(TCHAR szInput)
 //					GetHexID(pszDeviceIdString, &stDeviceID, true);
 					
 					DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("AUTO_Binding_TAG: %s\r\n"), m_stBarcodePair.byDevice);									
-					// Keep the last state Auto Mode
-//					m_uiScannerLastState = SCAN_STAGE_BINDING_TAG;							
+
+					// Keep the last state Auto Mode		
 					m_uiScannerLastState = SCAN_STAGE_PRODUCT;			
 				}
 				else if (g_stNvmMappingData.wScannerMode == OSSM_BARCODE_PAIRING_MODE)
@@ -477,17 +477,10 @@ void ScannerInputData(TCHAR szInput)
 							(m_uiScannerLastState == SCAN_STAGE_CHANGE_DEVICE_ID) || 
 							(m_uiScannerLastState == SCAN_STAGE_DEVICE_REGISTRATION))
 			{
-
-//				ESL_DEVICE_ID stDeviceID;
-//				pszPos = pszDeviceIdString = m_pszBarcodePos;				
-
 				// Tag
 				ScannerStringToArray(m_stBarcodePair.byDevice, sizeof(m_stBarcodePair.byDevice), pszPos);
 				GetHexID(pszDeviceIdString, &stDeviceID, true);
-				ScannerParseTagCommand(stDeviceID);
-				
-				// Keep the last state
-//				m_uiScannerLastState = SCAN_STAGE_TAG;						
+				ScannerParseTagCommand(stDeviceID);		
 			}
 			else
 			{
@@ -533,11 +526,8 @@ void ScannerInputData(TCHAR szInput)
 				if (m_uiScannerLastState == SCAN_STAGE_PRODUCT)
 				{
 					DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("%s\r\n"), " Product_Binding_TAG");			
-					LedReSetStatus(OSLS_IDENTIFIED_STATE);
-//					LedSetStatus(OSLS_IDENTIFIED_STATE);		// Set LED to OSLS_IDENTIFIED_STATE			
-					
-//					ESL_DEVICE_ID stDeviceID;			
-//					m_uiScannerLastState = SCAN_STAGE_PRODUCT;								
+					LedReSetStatus(OSLS_IDENTIFIED_STATE);		// ReSet LED to OSLS_IDENTIFIED_STATE			
+//					LedSetStatus(OSLS_IDENTIFIED_STATE);		// Set LED to OSLS_IDENTIFIED_STATE											
 					ScannerParseTagCommand(stDeviceID);										
 				}
 				else
@@ -548,11 +538,10 @@ void ScannerInputData(TCHAR szInput)
 					m_stBarcodePair.fLock = true;				
 					m_stBarcodePair.fSendBarcode = true;
 					
-					LedReSetStatus(OSLS_IDENTIFIED_STATE);
+					LedReSetStatus(OSLS_IDENTIFIED_STATE);		// ReSet LED to OSLS_IDENTIFIED_STATE			
 //					LedSetStatus(OSLS_IDENTIFIED_STATE);		// Set LED to OSLS_IDENTIFIED_STATE								
 					// Keep the last state	
-					m_uiScannerLastState = SCAN_STAGE_STANDBY;						
-					
+					m_uiScannerLastState = SCAN_STAGE_STANDBY;											
 				}
 	
 			}			
@@ -560,12 +549,10 @@ void ScannerInputData(TCHAR szInput)
 			{
 				if (m_uiScannerLastState == SCAN_STAGE_PRODUCT)
 				{				
-					LedReSetStatus(OSLS_IDENTIFIED_STATE);
+					LedReSetStatus(OSLS_IDENTIFIED_STATE);		// ReSet LED to OSLS_IDENTIFIED_STATE
 //					LedSetStatus(OSLS_IDENTIFIED_STATE);		// Set LED to OSLS_IDENTIFIED_STATE			
 					
 					DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("%s\r\n"), " PAIRING_Binding_TAG");			
-				// Keep the last state	
-//					m_uiScannerLastState = SCAN_STAGE_PRODUCT;
 					ScannerParseTagCommand(stDeviceID);				
 				}
 				else
@@ -584,7 +571,7 @@ void ScannerInputData(TCHAR szInput)
 				m_stBarcodePair.fLock = true;				
 				m_stBarcodePair.fSendBarcode = true;
 			
-					LedReSetStatus(OSLS_IDENTIFIED_STATE);
+					LedReSetStatus(OSLS_IDENTIFIED_STATE);		// ReSet LED to OSLS_IDENTIFIED_STATE
 //					LedSetStatus(OSLS_IDENTIFIED_STATE);		// Set LED to OSLS_IDENTIFIED_STATE			
 				// Keep the last state	
 				m_uiScannerLastState = SCAN_STAGE_STANDBY;				
