@@ -943,12 +943,12 @@ void ScannerParseCommand(ESL_BARCODE_VALUE stBarcodeValue)
 			DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Switch to barcode pairing mode.\r\n"));
 			m_stBarcodePair.fLock = false;						
 		}
-		else if (m_uiScannerLastState == SCAN_STAGE_BARCODE_PAIRING_MODE)
+		else if (m_uiScannerLastState == SCAN_STAGE_BARCODE_DEFAULT_MODE)
 		{
-			// Switch to barcode paring mode
+			// Switch to barcode default mode
 			m_stBarcodePair.fLock = true;
-			g_stNvmMappingData.wScannerMode = OSSM_BARCODE_PAIRING_MODE;
-			DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Switch to barcode pairing mode.\r\n"));
+			g_stNvmMappingData.wScannerMode = OSSM_BARCODE_DEFAULT_MODE;
+			DEBUG_MESSAGE(FLAG_MF_SCANNER, _T("Switch to barcode default mode.\r\n"));
 			m_stBarcodePair.fLock = false;						
 		}
 		
