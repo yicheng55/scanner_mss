@@ -377,8 +377,11 @@ typedef struct _ESL_EXTENSION_RSSI
     uint8_t nLength;                            // The size of the extension structure
     uint8_t nFormat;                            // Format
     bool fEnableAGC;                            // Enable Automatic Gain Control(AGC)
-    uint16_t uiRssiCode;                        // RSSI Code
-    //int16_t nInputPower;                      // Input Power (dBm)
+    //uint16_t uiRssiCode;                        // RSSI Code
+		uint8_t  uiRssiCode;                        // RSSI Code %X
+    uint8_t  uiChannel;                      		// RF Channel
+		uint8_t  uiDataRate;												// RF DataRate
+	
 } ESL_EXTENSION_RSSI, *PESL_EXTENSION_RSSI;
 
 typedef struct _ESL_EXTENSION_BINDING 

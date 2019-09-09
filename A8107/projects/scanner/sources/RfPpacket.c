@@ -499,11 +499,22 @@ void RfScanChannelSucceeded()
 //==============================================================================
 uint16_t RfGetRssiCode(void)
 {
+	  int tmp;
+		float  tmp1;
+
+#if 0      	
     uint32_t uiRssicode;
 	//DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("ADC9 Control register = 0x%X\r\n"), RADIO->ADC9);
     uiRssicode = RADIO->THRESHOLD & 0x1FF;            //read RSSI value(wanted signal RSSI)
 	//DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("wanted signal RSSI = 0x%X\r\n"), uiRssicode);
     return uiRssicode;	
+#endif
+
+    tmp= RADIO->THRESHOLD & 0x1FF;            //read RSSI value(wanted signal RSSI)
+		tmp1 = (tmp*0.4)-120;
+//    printf("RSSI Code is = %f --------\r\n", tmp1);
+    return abs((int)tmp1);
+	
 }
 //==============================================================================
 // Function     : RfGetRssiInputPower
@@ -1407,7 +1418,8 @@ bool RfSendBarcodePairing(BARCODE_PAIR *pstBarcode)
 	//PESL_PACKET pstScannerPacket = (PESL_PACKET)aryBuf;
 	PESL_PAIRING_PACKET pstScannerPacket = (PESL_PAIRING_PACKET)aryBuf;
 	//bool fPairing = true;
-
+	DEBUG_MESSAGE(FLAG_MF_COMMUNICATION, _T("ESL_PAIRING_PACKET Size=%d \r\n"),sizeof(ESL_PAIRING_PACKET));
+	
 	if (pstBarcode == NULL)
 		return false;
 	
@@ -1434,7 +1446,9 @@ bool RfSendBarcodePairing(BARCODE_PAIR *pstBarcode)
 	pstScannerPacket->stRssi.nLength = sizeof(ESL_EXTENSION_RSSI);
 	pstScannerPacket->stRssi.nFormat = RF_FMT_EXTENSION_RSSI;
 	pstScannerPacket->stRssi.fEnableAGC = RfIsRssiEnableAGC();
-	pstScannerPacket->stRssi.uiRssiCode = RfGetRssiCode();
+	pstScannerPacket->stRssi.uiRssiCode = (uint8_t)RfGetRssiCode();
+	pstScannerPacket->stRssi.uiChannel= RfGetChannel();
+	pstScannerPacket->stRssi.uiDataRate= RfGetDataRate();
 	//pstScannerPacket->stRssi.nInputPower = RfConvertRssiInputPower(pstScannerPacket->stRssi.uiRssiCode);
 	
 
