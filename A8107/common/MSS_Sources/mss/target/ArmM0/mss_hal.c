@@ -47,6 +47,7 @@
 #include "mss.h"
 #include "mss_int.h"
 #include "Board.h"
+#include "System.h"
 
 //*****************************************************************************
 // Global variables 
@@ -93,6 +94,12 @@ static mss_timer_tick_t delay_timer_cnt = 0;
 ******************************************************************************/
 void mss_hal_init(void)
 {
+		BoardInit();		//Initial hardware system
+	
+		// Initial RTC
+	  TurnOnExternalRTC();
+	  BoardInitRTC();
+	
 ////  // check calibration data
 ////  MSS_DEBUG_CHECK(CALBC1_8MHZ != 0xFF);
 ////  MSS_DEBUG_CHECK(CALDCO_8MHZ != 0xFF);

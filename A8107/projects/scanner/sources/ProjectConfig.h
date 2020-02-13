@@ -128,7 +128,7 @@
 //
 //##############################################################################
 //******************************************************************************	 
-//#define FLAG_LED_DEMO_BOARD						1
+#define FLAG_LED_DEMO_BOARD						1    //1=For TAG Board, 0=For scanner Board
 //******************************************************************************
 //##############################################################################
 #define PIN_EPD_RESET					14
@@ -137,8 +137,9 @@
 #ifdef FLAG_LED_DEMO_BOARD
 #define PIN_LED1						25		// LED1 Green
 #define PIN_LED2						26		// LED2 Yellow
-#define PIN_LED1_P						P25		// LED1 Green	
-#define PIN_LED2_P						P26		// LED2 Yellow
+#define PIN_LED1_P						P24		// LED1 Red	
+#define PIN_LED2_P						P25		// LED2 Green
+#define PIN_LED3_P						P26		// LED2 Yellow
 #else
 #define PIN_LED1						11		// LED1 Green
 #define PIN_LED2						15		// LED2 Yellow

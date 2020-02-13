@@ -114,7 +114,7 @@ int main(void)
 
   // run mss - shall never return
   mss_run();
-	return;
+	return 0;
 }
 
 /**************************************************************************//**

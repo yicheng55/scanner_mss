@@ -68,8 +68,7 @@ typedef uint16_t mss_int_flag_t;
  *  current global maskable interrupt flag, and then disabling it)
  */
 #define MSS_ENTER_CRITICAL_SECTION(int_flag)    do {                  \
-                               int_flag = __get_SR_register() & GIE;  \
-                               __bic_SR_register(GIE);                \
+															  __disable_irq();	\
                                } while(0)
 
 /** MSS_LEAVE_CRITICAL_SECTION
@@ -77,7 +76,7 @@ typedef uint16_t mss_int_flag_t;
  *  maskable interrupt flag from the last @ref MSS_ENTER_CRITICAL_SECTION
  */
 #define MSS_LEAVE_CRITICAL_SECTION(int_flag)    do {                  \
-                               __bis_SR_register(int_flag);           \
+                               __enable_irq();           \
                                }while(0)
 
 /** MSS_MALLOC

@@ -289,7 +289,7 @@
 #define ERROR_BAD_EXE_FORMAT						193 //(0xC1) %1 is not a valid Win32 application.
 #define ERROR_ITERATED_DATA_EXCEEDS_64k				194 //(0xC2) The operating system cannot run %1.
 #define ERROR_INVALID_MINALLOCSIZE					195 //(0xC3) The operating system cannot run %1.
-#define ERROR DYNLINK_FROM_INVALID_RING				196 //(0xC4) The operating system cannot run this application program.
+#define ERROR_DYNLINK_FROM_INVALID_RING				196 //(0xC4) The operating system cannot run this application program.
 #define ERROR_IOPL_NOT_ENABLED						197 //(0xC5) The operating system is not presently configured to run this application.
 #define ERROR_INVALID_SEGDPL						198 //(0xC6) The operating system cannot run %1.
 #define ERROR_AUTODATASEG_EXCEEDS_64k				199 //(0xC7) The operating system cannot run this application program.
