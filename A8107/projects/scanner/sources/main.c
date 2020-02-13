@@ -70,7 +70,7 @@ void OnTimer(UINT_PTR nIDEvent)
 	}
 }
 
-int main(void)
+int main_Scann(void)
 {
 	uint8_t uiRfDataRate;
 	uint8_t * puiMachineState;
