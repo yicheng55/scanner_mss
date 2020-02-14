@@ -9,8 +9,14 @@
  *
  * Copyright (C) 2017 AMICCOM Electronics Corp. All rights reserved.
  *****************************************************************************/
-
+#include <stdio.h>
 #include "A8107M.h"
+#include "RTC.h"
+
+int PastHour = 0;
+int CurrentHour = 0;
+int CurrentYear = 0;
+int CurrentDay = 0;
 
 /** @addtogroup A8107M_Driver A8107M Driver
     @{
@@ -111,6 +117,43 @@ void RTC_Interrupt_Enable(uint32_t alarm, uint32_t sec, uint32_t half_sec, uint3
                     ((half_sec  & 0x1ul) << RTC_CTRL_HSECIE_Pos) |
                     ((sec       & 0x1ul) << RTC_CTRL_SECIE_Pos) |
                     ((alarm     & 0x1ul) << RTC_CTRL_ALARMIE_Pos);
+}
+
+
+
+void getCurrentDay(void)
+{
+	CurrentHour = ((RTC->COUNT & RTC_COUNT_HOUR_Msk)>>RTC_COUNT_HOUR_Pos);
+	if(CurrentHour < PastHour)
+	{
+		CurrentDay += 1;
+		PastHour = CurrentHour;
+	}
+	else
+	{
+		PastHour = CurrentHour;
+	}
+	
+	if(CurrentDay > 365)
+	{
+		CurrentYear += 1;
+		CurrentDay -= 366;
+	}
+}
+
+
+void RTC_PrintTime(void)
+{
+	  getCurrentDay();
+//		printf("%X ",RTC_COUNT_TMS_Msk);
+		printf("%d ",RTC->COUNT);
+    printf("[%dd:%2dh:%2dm:%2ds.%02d0]\r\n",
+            CurrentDay,
+            (int)((RTC->COUNT & RTC_COUNT_HOUR_Msk)>>RTC_COUNT_HOUR_Pos),
+            (int)((RTC->COUNT & RTC_COUNT_MIN_Msk)>>RTC_COUNT_MIN_Pos),
+            (int)((RTC->COUNT & RTC_COUNT_SEC_Msk)>>RTC_COUNT_SEC_Pos),
+            (int)((RTC->COUNT & RTC_COUNT_TMS_Msk)>>RTC_COUNT_TMS_Pos));
+//		TagDebug(("printTime: [%dd:%2dh:%2dm:%2ds.%02d0]\r\n,CurrentDay,(int)((RTC->COUNT & RTC_COUNT_HOUR_Msk)>>RTC_COUNT_HOUR_Pos),(int)((RTC->COUNT & RTC_COUNT_MIN_Msk)>>RTC_COUNT_MIN_Pos),(int)((RTC->COUNT & RTC_COUNT_SEC_Msk)>>RTC_COUNT_SEC_Pos),(int)((RTC->COUNT & RTC_COUNT_TMS_Msk)>>RTC_COUNT_TMS_Pos)\r\n"));				
 }
 
 

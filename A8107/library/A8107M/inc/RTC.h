@@ -51,6 +51,8 @@ extern void RTC_ManualCount_Set(uint32_t en, uint32_t count);
  */
 extern void RTC_Interrupt_Enable(uint32_t alarm, uint32_t sec, uint32_t half_sec, uint32_t ten_ms, uint32_t manual_count);
 
+void RTC_PrintTime(void);
+
 /*@}*/ /* end of group RTC_Driver */
 /*@}*/ /* end of group A8107M_Driver */
 

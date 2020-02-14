@@ -52,6 +52,7 @@
 #include "M8107.h"
 #include "slptimer.h"
 #include "Utility.h"
+#include "RTC.h"
 
 //*****************************************************************************
 // Global variables 
@@ -167,6 +168,12 @@ void mss_hal_sleep(mss_timer_tick_t sleep_timeout)
 #endif /* (MSS_TASK_USE_TIMER == TRUE) */
 
 //  ??????????????????????????????????????????  
+////						SLPTIMER_Initial(SLPTIMER1, (6533 - 6), 1, 1);	
+////						DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("EnterPM1 CPU:\r\n"));
+////						RTC_PrintTime();				
+////						Delay10us(50);
+////						EnterPM1();
+	
 ////  // go to LPM0 to keep SMCLK generating WDT interrupt
 ////  __bis_SR_register(LPM0_bits + GIE);
 
@@ -265,11 +272,15 @@ void MSS_TaskUseTimer(void)
       // wake up CPU if MSS is in sleep mode
       if(mss_timer_tick())
       {
-						SLPTIMER_Initial(SLPTIMER1, (6533 - 6), 1, 1);	
-						//SLPTIMER_StopTimer(SLPTIMER1);
-						DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("Enter PM1:\r\n"));
-						Delay10us(50);
-						EnterPM1();
+//  ??????????????????????????????				
+//						SLPTIMER_Initial(SLPTIMER1, (6533 - 6), 1, 1);	
+//						//SLPTIMER_StopTimer(SLPTIMER1);
+
+						DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("Wake up CPU:\r\n"));
+						RTC_PrintTime();				
+//						Delay10us(50);
+//						EnterPM1();
+//						RTC_PrintTime();
 ////        __bic_SR_register_on_exit(LPM0_bits);
       }
     }
