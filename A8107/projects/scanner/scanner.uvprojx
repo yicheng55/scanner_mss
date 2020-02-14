@@ -547,6 +547,11 @@
               <FileType>1</FileType>
               <FilePath>.\sources\NonVolatileMemory.c</FilePath>
             </File>
+            <File>
+              <FileName>M8107.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\M8107.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

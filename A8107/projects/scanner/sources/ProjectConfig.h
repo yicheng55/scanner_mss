@@ -135,8 +135,9 @@
 #define PIN_EPD_BUSY					13
 
 #ifdef FLAG_LED_DEMO_BOARD
-#define PIN_LED1						25		// LED1 Green
-#define PIN_LED2						26		// LED2 Yellow
+#define PIN_LED1						24		// LED1 Red
+#define PIN_LED2						25		// LED2 Green
+#define PIN_LED3						26		// LED2 Yellow
 #define PIN_LED1_P						P24		// LED1 Red	
 #define PIN_LED2_P						P25		// LED2 Green
 #define PIN_LED3_P						P26		// LED2 Yellow

@@ -48,6 +48,10 @@
 #include "mss_int.h"
 #include "Board.h"
 #include "System.h"
+#include "Debug.h"
+#include "M8107.h"
+#include "slptimer.h"
+#include "Utility.h"
 
 //*****************************************************************************
 // Global variables 
@@ -151,17 +155,18 @@ void mss_hal_init(void)
 ******************************************************************************/
 void mss_hal_sleep(mss_timer_tick_t sleep_timeout)
 {
-////#if (MSS_TASK_USE_TIMER == TRUE)
-////  if(sleep_timeout != MSS_SLEEP_NO_TIMEOUT)
-////  {
-////    // save delay timer ticks
-////    delay_timer_cnt = sleep_timeout;
-////  }
-////#else
-////  // make compiler quiet
-////  sleep_timeout = sleep_timeout;
-////#endif /* (MSS_TASK_USE_TIMER == TRUE) */
+#if (MSS_TASK_USE_TIMER == TRUE)
+  if(sleep_timeout != MSS_SLEEP_NO_TIMEOUT)
+  {
+    // save delay timer ticks
+    delay_timer_cnt = sleep_timeout;
+  }
+#else
+  // make compiler quiet
+  sleep_timeout = sleep_timeout;
+#endif /* (MSS_TASK_USE_TIMER == TRUE) */
 
+//  ??????????????????????????????????????????  
 ////  // go to LPM0 to keep SMCLK generating WDT interrupt
 ////  __bis_SR_register(LPM0_bits + GIE);
 
@@ -238,36 +243,37 @@ uint8_t mss_get_highest_prio_task(mss_task_bits_t ready_bits)
 * @return     -
 * 
 ******************************************************************************/
+////  ???????????????????    ?????????????????
 ////#pragma vector=WDT_VECTOR
 ////__interrupt void WDT_ISR(void)
-////{
-////  static uint8_t internal_tick = 0;
-////  
-////  // call mss timer tick function every four ticks to produce ~1ms timer tick
-////  if(internal_tick++ & 0x01)
-////  {
-////    // increment mss timer tick
-////	mss_timer_tick_cnt++;
+void MSS_TaskUseTimer(void)
+{
+    // increment mss timer tick
+	  mss_timer_tick_cnt++;
 
-////    if(delay_timer_cnt)
-////    {
-////      // decrement counter
-////      delay_timer_cnt--;
-////    }
+    if(delay_timer_cnt)
+    {
+      // decrement counter
+      delay_timer_cnt--;
+    }
 
-////    if(delay_timer_cnt == 0)
-////    {
-////      // it is ok to enable interrupt now
-////      __enable_interrupt();
+    if(delay_timer_cnt == 0)
+    {
+      // it is ok to enable interrupt now
+      __enable_irq();
 
-////      // wake up CPU if MSS is in sleep mode
-////      if(mss_timer_tick())
-////      {
+      // wake up CPU if MSS is in sleep mode
+      if(mss_timer_tick())
+      {
+						SLPTIMER_Initial(SLPTIMER1, (6533 - 6), 1, 1);	
+						//SLPTIMER_StopTimer(SLPTIMER1);
+						DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("Enter PM1:\r\n"));
+						Delay10us(50);
+						EnterPM1();
 ////        __bic_SR_register_on_exit(LPM0_bits);
-////      }
-////    }
-////  }
-////}
+      }
+    }
+}
 #endif
 
 #if (MSS_PREEMPTIVE_SCHEDULING == TRUE)
@@ -307,21 +313,21 @@ uint8_t mss_get_highest_prio_task(mss_task_bits_t ready_bits)
 * @return     -
 *
 ******************************************************************************/
-#if defined (__IAR_SYSTEMS_ICC__)
-int __low_level_init(void)
-{
-  // stop WDT
-  WDTCTL = WDTPW + WDTHOLD;
-
-  return 1;
-}
-#else
-int _system_pre_init(void)
-{
+////#if defined (__IAR_SYSTEMS_ICC__)
+////int __low_level_init(void)
+////{
 ////  // stop WDT
 ////  WDTCTL = WDTPW + WDTHOLD;
 
-  return 1;
-}
-#endif
+////  return 1;
+////}
+////#else
+////int _system_pre_init(void)
+////{
+////////  // stop WDT
+////////  WDTCTL = WDTPW + WDTHOLD;
+
+////  return 1;
+////}
+////#endif
 

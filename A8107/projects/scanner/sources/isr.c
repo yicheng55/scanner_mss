@@ -95,6 +95,7 @@ void TIMER0_Handler(void)
 // Return       : 
 // Remarks      : 
 //==============================================================================
+extern  void MSS_TaskUseTimer(void);
 void TIMER1_Handler(void)
 {
 	//TagDebug(("TIMER1 TimeOut\r\n"));
@@ -102,6 +103,7 @@ void TIMER1_Handler(void)
 	//Timer_StopTimer(TIMER1);
 	TIMER1->INTCLEAR = 1;
 	OnTimer(EVENT_TIMER_TIMING_TRIGGER);	
+	MSS_TaskUseTimer();
 	return;
 }
 

@@ -47,6 +47,7 @@
 
 #include "dev_types.h"
 #include "hal.h"
+#include "AMICCOM_CM0.h"
 
 //*****************************************************************************
 // Global variables 
@@ -86,6 +87,8 @@ void hal_init(void)
 ////  // initialize both LEDs on Launchpad
 ////  P1DIR |= (BIT0 + BIT6);
 ////  P1OUT &= ~(BIT0 + BIT6);
+//		NVIC_EnableIRQ(SLPTIMER1_IRQn);
+		GPIO0->WUN_PIN.P08 = 0;     //WUPM1
 }
 
 /**************************************************************************//**

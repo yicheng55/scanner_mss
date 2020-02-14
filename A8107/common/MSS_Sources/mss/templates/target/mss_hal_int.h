@@ -60,7 +60,7 @@
  *  enable global interrupt of the target device. This function is only called
  *  once in @ref mss_run() function.
  */
-#define MSS_ENABLE_GLOBAL_INTERRUPT()       
+#define MSS_ENABLE_GLOBAL_INTERRUPT()       __enable_irq();
 
 //*****************************************************************************
 // External function declarations

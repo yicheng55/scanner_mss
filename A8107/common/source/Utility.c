@@ -1,6 +1,6 @@
-#include "Utility.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "Utility.h"
 
 // Redefine the XTAL of the utility and rename XTAL to DELAY_XTAL
 //#define XTAL	(SystemCoreClock/1000)	//16000, 16MHz
@@ -17,16 +17,16 @@
 // Return       : 
 // Remarks      : 
 //==============================================================================
-void Utility(void)
-{
-	
-}
+//void Utility(void)
+//{
+//	
+//}
 
 
 /************************************************************************
 **  Delay1ms
 ************************************************************************/
-#if 0
+#if 1
 void Delay1ms(uint32_t n)
 {
     SysTick->LOAD = 16000-1;
@@ -41,7 +41,7 @@ void Delay1ms(uint32_t n)
 }
 #endif
 
-#if 1
+#if 0
 void Delay1ms(uint32_t n)
 {
 	SysTick->LOAD = (((DELAY_XTAL)*n)-1);//setting 
