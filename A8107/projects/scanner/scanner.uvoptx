@@ -116,6 +116,10 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
+          <Key>DLGUARM</Key>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
           <Key>ARMRTXEVENTFLAGS</Key>
           <Name>-L70 -Z18 -C0 -M0 -T1</Name>
         </SetRegEntry>
@@ -144,34 +148,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>186</LineNumber>
+          <LineNumber>251</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>18922</Address>
+          <Address>17460</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\common\MSS_Sources\Examples\Projects\Generic\MSS_Event_Example\Source\event_app.c</Filename>
+          <Filename>.\sources\Led.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Master_M8107\../../common/MSS_Sources/Examples/Projects/Generic/MSS_Event_Example/Source/event_app.c\186</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>142</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>18790</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\common\MSS_Sources\Examples\Projects\Generic\MSS_Event_Example\Source\event_app.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\Master_M8107\../../common/MSS_Sources/Examples/Projects/Generic/MSS_Event_Example/Source/event_app.c\142</Expression>
+          <Expression>\\Master_M8107\sources/Led.c\251</Expression>
         </Bp>
       </Breakpoint>
       <Tracepoint>
@@ -529,7 +517,7 @@
       <GroupNumber>4</GroupNumber>
       <FileNumber>23</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>

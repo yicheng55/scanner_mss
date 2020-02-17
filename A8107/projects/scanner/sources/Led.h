@@ -30,7 +30,7 @@
 //------------------------------------------------------------------------------
 //--- Board ---
 //------------------------------------------------------------------------------
-#ifdef FLAG_LED_DEMO_BOARD
+#ifdef  FLAG_LED_DEMO_BOARD
 #define LED_INDICATOR_OFF					1				//Indicators
 #define LED_INDICATOR_ON					0	
 #else
@@ -130,11 +130,12 @@ void LedSetValue(uint32_t uiStatus);	// Set LED Value
 void LedShowStatus(void);				// Change LED status according to time
 //------------------------------------------------------------------------------
 
+void armm0_toggle_led(uint8_t led);
 
 //==============================================================================
 //--- Declarative Other Functions ---
 //==============================================================================
-#if 0
+#if 1
 void SetLed1(bool fOn);
 void SetLed2(bool fOn);
 #endif

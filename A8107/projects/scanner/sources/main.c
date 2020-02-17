@@ -63,7 +63,7 @@ void OnTimer(UINT_PTR nIDEvent)
 				DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T(" T "));
 			}
 #endif
-			OnLedTriggerTimer(TIME_TIMING_TRIGGER);
+////			OnLedTriggerTimer(TIME_TIMING_TRIGGER);  //2020-02-14 disable
 			break;
 		default:
 			break;

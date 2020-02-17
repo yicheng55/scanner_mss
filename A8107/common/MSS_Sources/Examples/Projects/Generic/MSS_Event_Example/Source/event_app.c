@@ -187,12 +187,14 @@ void task_2(void *param)
     {
       // toggle LED 1
       HAL_LED1_TOGGLE();
+			DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("HAL_LED1_TOGGLE():\r\n"));
     }
-
+  
     if(event & LED_2_TOGGLE_EVENT)
     {
       // toggle LED 2
       HAL_LED2_TOGGLE();
+			DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("HAL_LED2_TOGGLE():\r\n"));
     }
   }
   

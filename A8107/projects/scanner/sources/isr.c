@@ -102,7 +102,7 @@ void TIMER1_Handler(void)
 	//DEBUG_MESSAGE(FLAG_MF_TAG, _T("*** Timer1 shot ***\r\n"));
 	//Timer_StopTimer(TIMER1);
 	TIMER1->INTCLEAR = 1;
-	OnTimer(EVENT_TIMER_TIMING_TRIGGER);	
+	//OnTimer(EVENT_TIMER_TIMING_TRIGGER);	
 	MSS_TaskUseTimer();
 	return;
 }

@@ -4,6 +4,7 @@
 #include "Led.h"
 #include "Utility.h"
 #include "NonVolatileMemory.h"
+#include "ProjectConfig.h"
 
 //==============================================================================
 //--- Declarative Variables ---
@@ -39,7 +40,8 @@ const uint32_t m_uiStatus[][13] = {
 	{ 3000, 12000, 4, 0x01, 0x00, 0x02, 0x00},	// Spun down
 	{ 250, 2000, 8, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},// Standby	
 };	
-							  
+		
+static uint8_t stled1=0,stled2=0;
 							  
 
 //==============================================================================
@@ -212,8 +214,7 @@ void LedShowStatus()
 
 
 
-
-#if 0
+#if 1
 
 void SetLed1(bool fOn)
 {
@@ -241,6 +242,24 @@ void SetLed2(bool fOn)
 		GPIO_LED->DATAOUT_PIN.PIN_LED2_P = LED_INDICATOR_ON;  
 	else
 		GPIO_LED->DATAOUT_PIN.PIN_LED2_P = LED_INDICATOR_OFF; 
+}
+
+
+void armm0_toggle_led(uint8_t led)
+{
+	
+  if(led == 1)
+  {
+		stled1 = ~stled1;
+		printf("stled1=%x  ,",stled1);
+    SetLed1(stled1);
+  }
+  else if(led == 2)
+  {
+		stled2 = ~stled2;
+		printf("stled2=%x  ,",stled2);
+    SetLed2(stled2);
+  }
 }
 
 #endif
