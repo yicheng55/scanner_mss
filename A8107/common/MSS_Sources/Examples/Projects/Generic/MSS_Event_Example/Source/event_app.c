@@ -134,8 +134,7 @@ void task_1(void* param)
   
   // set timer
   APP_ASSERT(mss_timer_start(timer_hdl_toggle_led1, LED_1_TOGGLE_MS) == true);
-  APP_ASSERT(mss_timer_periodic_start(timer_hdl_toggle_led2, LED_2_TOGGLE_MS,
-		                              LED_2_TOGGLE_MS) == true);
+  APP_ASSERT(mss_timer_periodic_start(timer_hdl_toggle_led2, LED_2_TOGGLE_MS,LED_2_TOGGLE_MS) == true);
 
   while(1)
   {

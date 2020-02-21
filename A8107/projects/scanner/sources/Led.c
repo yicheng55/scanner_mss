@@ -41,7 +41,6 @@ const uint32_t m_uiStatus[][13] = {
 	{ 250, 2000, 8, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},// Standby	
 };	
 		
-static uint8_t stled1=0,stled2=0;
 							  
 
 //==============================================================================
@@ -247,6 +246,7 @@ void SetLed2(bool fOn)
 
 void armm0_toggle_led(uint8_t led)
 {
+	static uint8_t stled1=0,stled2=0;
 	
   if(led == 1)
   {
