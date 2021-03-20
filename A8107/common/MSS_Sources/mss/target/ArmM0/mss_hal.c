@@ -104,6 +104,7 @@ void mss_hal_init(void)
 		// Initial RTC
 	  TurnOnExternalRTC();
 	  BoardInitRTC();
+		NVIC_EnableIRQ(SLPTIMER1_IRQn);	
 	
 ////  // check calibration data
 ////  MSS_DEBUG_CHECK(CALBC1_8MHZ != 0xFF);
@@ -172,7 +173,10 @@ void mss_hal_sleep(mss_timer_tick_t sleep_timeout)
 //						DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("mss_hal_sleep(%d) \r\n", sleep_timeout));
 //						RTC_PrintTime();				
 ////						Delay10us(50);
-////						EnterPM1();
+//					  DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("EnterPM1():\r\n"));
+//						RTC_PrintTime();	
+//						Delay100us(10);
+//						EnterPM1();
 	
 ////  // go to LPM0 to keep SMCLK generating WDT interrupt
 ////  __bis_SR_register(LPM0_bits + GIE);
@@ -276,8 +280,12 @@ void MSS_TaskUseTimer(void)
 //						SLPTIMER_Initial(SLPTIMER1, (6533 - 6), 1, 1);	
 //						//SLPTIMER_StopTimer(SLPTIMER1);
 
-						DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("Wake up CPU:\r\n"));
-						RTC_PrintTime();				
+						DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("Wake up CPU: "));
+						RTC_PrintTime();		
+	
+						Delay100us(5);
+						EnterPM1();
+				
 //						Delay10us(50);
 //						EnterPM1();
 //						RTC_PrintTime();

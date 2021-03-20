@@ -48,6 +48,7 @@ void Delay1ms(uint32_t);
 void Delay100us(uint32_t);
 void Delay10us(uint32_t);
 void Delay1us(uint32_t);
+void Set_TAG_Mili_SleepTime(int SLPT);	 
 
 #ifdef __cplusplus
 }

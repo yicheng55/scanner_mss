@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Utility.h"
+#include "A8107M.h"
+#include "slptimer.h"
 
 // Redefine the XTAL of the utility and rename XTAL to DELAY_XTAL
 //#define XTAL	(SystemCoreClock/1000)	//16000, 16MHz
@@ -91,3 +93,23 @@ void Delay1us(uint32_t n)
 	SysTick->CTRL  = 0x10000;
 	SysTick->CTRL = 0;
 }
+
+
+void Set_TAG_Mili_SleepTime(int SLPT)
+{
+	float Time = 0;
+	uint32_t uTime = 0;
+	
+	Time = (SLPT / 1000.0);
+//	printf("SLPT = %d..\r\n",SLPT);
+//	printf("Time = %lf..\r\n",Time);	
+	
+	Time = (SLPT / 1000.0) * 1638.4;
+//	printf("Time = %lf..\r\n",Time);
+	uTime = Time;
+	SLPTIMER_Initial(SLPTIMER1, uTime, 3, 1);
+//	printf("uTime = %u..\r\n",uTime);
+}
+
+
+

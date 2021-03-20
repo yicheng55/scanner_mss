@@ -54,6 +54,9 @@
 #include "mss.h"
 #include "hal.h"
 #include "event_app.h"
+#include "A8107M.h"
+#include "Utility.h"
+#include "RTC.h"
 
 //*****************************************************************************
 // Global variables 
@@ -77,8 +80,8 @@ static mss_task_ctx_t ctx_state_2 = MSS_TASK_CTX_STATE_INIT_VAL;
 #define TASK_1_ID                       (0)
 #define TASK_2_ID                       (1)
 
-#define LED_1_TOGGLE_MS                 (500)
-#define LED_2_TOGGLE_MS                 (1000)
+#define LED_1_TOGGLE_MS                 (20)
+#define LED_2_TOGGLE_MS                 (40)
 
 #define LED_1_TOGGLE_EVENT              (0x01)
 #define LED_2_TOGGLE_EVENT              (0x02)
@@ -111,7 +114,9 @@ int main(void)
 
   // initialize tasks
   init_tasks();
-
+	Set_TAG_Mili_SleepTime(2000);
+	Delay1ms(1000);
+	Delay10us(10);
   // run mss - shall never return
   mss_run();
 	return 0;
@@ -186,6 +191,7 @@ void task_2(void *param)
     {
       // toggle LED 1
       HAL_LED1_TOGGLE();
+			RTC_PrintTime();		
 			DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("HAL_LED1_TOGGLE():\r\n"));
     }
   
@@ -193,6 +199,7 @@ void task_2(void *param)
     {
       // toggle LED 2
       HAL_LED2_TOGGLE();
+			RTC_PrintTime();		
 			DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("HAL_LED2_TOGGLE():\r\n"));
     }
   }
