@@ -80,8 +80,8 @@ static mss_task_ctx_t ctx_state_2 = MSS_TASK_CTX_STATE_INIT_VAL;
 #define TASK_1_ID                       (0)
 #define TASK_2_ID                       (1)
 
-#define LED_1_TOGGLE_MS                 (20)
-#define LED_2_TOGGLE_MS                 (40)
+#define LED_1_TOGGLE_MS                 (23)
+#define LED_2_TOGGLE_MS                 (53)
 
 #define LED_1_TOGGLE_EVENT              (0x01)
 #define LED_2_TOGGLE_EVENT              (0x02)
@@ -114,7 +114,6 @@ int main(void)
 
   // initialize tasks
   init_tasks();
-	Set_TAG_Mili_SleepTime(2000);
 	Delay1ms(1000);
 	Delay10us(10);
   // run mss - shall never return
@@ -143,6 +142,7 @@ void task_1(void* param)
 
   while(1)
   {
+		DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("task_1():\r\n"));		
     if(mss_timer_check_expired(timer_hdl_toggle_led1) == true)
     {
       // send event to task 2 to toggle LED 1
@@ -184,6 +184,9 @@ void task_2(void *param)
 
   while(1)
   {
+		
+	DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("task_2():\r\n"));
+		
 	// wait for an event event
 	MSS_EVENT_WAIT(event, ctx_state_2);
 

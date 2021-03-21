@@ -76,6 +76,7 @@ void BoardInit(void)
 	//SetOneshotTimer(TIMER0, 100);
 	BoardInitTimer(TIMER_ONESHOT, 100);		// 100ms for sync
 	BoardInitTimer(TIMER_TIMING_TRIGGER, TIME_TIMING_TRIGGER);		// 5ms for sync
+	Set_TAG_Mili_SleepTime(2000);
 	ScannerDebug(_T("Board initialization completed\r\n"));
 	
 	
