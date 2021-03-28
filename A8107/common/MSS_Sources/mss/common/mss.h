@@ -124,6 +124,7 @@
  *  variable with initial value of MSS_TASK_CTX_STATE_INIT_VAL
  */
 typedef uint16_t mss_task_ctx_t;
+typedef uint8_t mss_task_tf_t;
 
 /** MSS_TASK_CTX_STATE_INIT_VAL
  *  initial value of mss task context

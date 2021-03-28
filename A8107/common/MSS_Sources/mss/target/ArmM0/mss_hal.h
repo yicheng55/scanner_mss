@@ -96,7 +96,7 @@ typedef uint16_t mss_int_flag_t;
  *  time for one MSS timer tick in milliseconds - depending on the
  *  implementation in mss_hal.c
  */
-#define MSS_TIMER_TICK_MS              (1)
+#define MSS_TIMER_TICK_MS              (2)
 #endif
 
 //*****************************************************************************

@@ -117,7 +117,6 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -149,9 +148,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
+          <LineNumber>53</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>9992</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\common\MSS_Sources\Examples\Projects\Generic\MSS_Event_Example\Source\LedDispTask.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\Master_M8107\../../common/MSS_Sources/Examples/Projects/Generic/MSS_Event_Example/Source/LedDispTask.c\53</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
           <LineNumber>240</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>20234</Address>
+          <Address>20398</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -162,12 +177,38 @@
           <ExecCommand></ExecCommand>
           <Expression>\\Master_M8107\../../common/MSS_Sources/Examples/Projects/Generic/MSS_Event_Example/Source/event_app.c\240</Expression>
         </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>217</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>21042</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\common\MSS_Sources\mss\common\mss.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\Master_M8107\../../common/MSS_Sources/mss/common/mss.c\217</Expression>
+        </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
           <ItemText>timer_tbl</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>mss_task_list</ItemText>
+        </Ww>
+        <Ww>
+          <count>2</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>mss_ready_task_bits</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

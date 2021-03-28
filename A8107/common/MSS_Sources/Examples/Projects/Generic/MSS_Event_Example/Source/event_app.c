@@ -80,7 +80,7 @@ static mss_task_ctx_t ctx_state_2 = MSS_TASK_CTX_STATE_INIT_VAL;
 
 #define TASK_1_ID                       (0)
 #define TASK_2_ID                       (1)
-//#define LED_Disp_Task_ID           		  (3)
+//#define LED_Disp_Task_ID           		  (2)
 
 #define LED_1_TOGGLE_MS                 (500)
 #define LED_2_TOGGLE_MS                 (1000)

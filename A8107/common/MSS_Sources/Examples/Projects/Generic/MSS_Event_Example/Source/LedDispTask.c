@@ -33,7 +33,7 @@ static mss_timer_t LED_Disp_tmr;
 //*****************************************************************************
 //#define TASK_1_ID                       (0)
 //#define TASK_2_ID                       (1)
-#define LED_Disp_Task_ID           		  (3)
+#define LED_Disp_Task_ID           		    (2)
 
 
 #define APP_ASSERT(cond)                HAL_ASSERT(cond)
@@ -47,7 +47,7 @@ static mss_timer_t LED_Disp_tmr;
 void LED_Disp_Task(void *param)
 {
 	  static mss_task_ctx_t LED_Disp_Task_ctx = MSS_TASK_CTX_STATE_INIT_VAL;
-//		static mss_task_tf_t LED_Disp_Task_tf 	= MSS_TASK_CTX_STATE_INIT_VAL;
+		static mss_task_tf_t LED_Disp_Task_tf 	= MSS_TASK_CTX_STATE_INIT_VAL;
 	 // mss_event_t LED_Disp_event;
 	
 	  MSS_BEGIN(LED_Disp_Task_ctx);
@@ -63,19 +63,19 @@ void LED_Disp_Task(void *param)
 //#if (Printf_Debug_Viewer == true)	
 					printf("Execute LED_Disp_Task , Task no : %d\n", LED_Disp_Task_ID);
 //#endif
-//					if (LED_Disp_Task_tf == true) 
+					if (LED_Disp_Task_tf == true) 
 						{
 							mss_timer_start(LED_Disp_tmr, MSS_TIMER_MS_TO_TICKS(1000));				  						
 							HAL_LED3_TOGGLE();			
-//							LED_Disp_Task_tf	=	false;
+							LED_Disp_Task_tf	=	false;
 						}
-//					else
-//						{
-//							mss_timer_start(LED_Disp_tmr, MSS_TIMER_MS_TO_TICKS(1000));				  						
-//							BSP_LED_Toggle(LED4);						
-//							LED_Disp_Task_tf	=	true;
-//						
-//						}			
+					else
+						{
+							mss_timer_start(LED_Disp_tmr, MSS_TIMER_MS_TO_TICKS(1000));				  						
+							HAL_LED3_TOGGLE();							
+							LED_Disp_Task_tf	=	true;
+						
+						}			
 					}
 	    MSS_RETURN(LED_Disp_Task_ctx);
 	  }
