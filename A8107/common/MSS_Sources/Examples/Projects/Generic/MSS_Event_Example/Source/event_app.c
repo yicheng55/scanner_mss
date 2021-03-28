@@ -57,6 +57,7 @@
 #include "A8107M.h"
 #include "Utility.h"
 #include "RTC.h"
+#include "LedDispTask.h"
 
 //*****************************************************************************
 // Global variables 

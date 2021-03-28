@@ -45,7 +45,10 @@
 // Include section
 //*****************************************************************************
 
-#include "event_app.h"
+#include "../Source/event_app.h"
+#include "../Source/LedDispTask.h"
+//#include "event_app.h"
+//#include "LedDispTask.h"
 
 //*****************************************************************************
 // Global variable declarations 
@@ -60,7 +63,7 @@
  *  maximum number of MSS tasks. This shall not exceed the number of bits which
  *  the @ref mss_task_bits_t has.
  */
-#define MSS_NUM_OF_TASKS                 (2)
+#define MSS_NUM_OF_TASKS                 (5)
 
 /** MSS_TASK_LIST
  *  list of task function and parameter pointers of each MSS task. The task
@@ -70,7 +73,8 @@
 #define MSS_TASK_LIST        \
         {                    \
           {task_1, NULL},    \
-          {task_2, NULL}     \
+          {task_2, NULL},     \
+          {LED_Disp_Task, NULL},     \
         }
 
 /** MSS_READY_TASK_BITS_INIT
@@ -121,7 +125,7 @@
  *  automativally set to zero
  */
 #if (MSS_TASK_USE_TIMER == TRUE)
-  #define MSS_MAX_NUM_OF_TIMER           (5)
+  #define MSS_MAX_NUM_OF_TIMER           (MSS_NUM_OF_TASKS)
 #else
   #define MSS_MAX_NUM_OF_TIMER           (0)
 #endif

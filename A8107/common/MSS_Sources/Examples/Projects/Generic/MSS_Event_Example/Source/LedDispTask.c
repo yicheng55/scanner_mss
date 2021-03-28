@@ -56,7 +56,8 @@ void LED_Disp_Task(void *param)
     APP_ASSERT(mss_timer_start(LED_Disp_tmr,MSS_TIMER_MS_TO_TICKS(1000)) == true);
 	  while(1)
 	  {	
-
+	    DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("LED_Disp_Task():\r\n"));
+			
 	    if (mss_timer_check_expired(LED_Disp_tmr) == true)
 				{
 //#if (Printf_Debug_Viewer == true)	
