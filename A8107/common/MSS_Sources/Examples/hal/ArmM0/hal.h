@@ -60,17 +60,20 @@
 // Macros (defines) and data types 
 //*****************************************************************************
 
-// red LED on MSP-EXP430G2 Launchpad
-#define HAL_LED1_ON()            do {P1OUT |= BIT0;} while(0)
-#define HAL_LED1_OFF()           do {P1OUT &= ~BIT0;} while(0)
+//// red LED on MSP-EXP430G2 Launchpad
+//#define HAL_LED1_ON()            do {P1OUT |= BIT0;} while(0)
+//#define HAL_LED1_OFF()           do {P1OUT &= ~BIT0;} while(0)
 #define HAL_LED1_TOGGLE()        armm0_toggle_led(1)
 ////#define HAL_LED1_TOGGLE()        hal_toggle_led(1)
 
-// green LED on MSP-EXP430G2 Launchpad
-#define HAL_LED2_ON()            do {P1OUT |= BIT6;} while(0)
-#define HAL_LED2_OFF()           do {P1OUT &= ~BIT6;} while(0)
+//// green LED on MSP-EXP430G2 Launchpad
+//#define HAL_LED2_ON()            do {P1OUT |= BIT6;} while(0)
+//#define HAL_LED2_OFF()           do {P1OUT &= ~BIT6;} while(0)
 #define HAL_LED2_TOGGLE()        armm0_toggle_led(2)
 ////#define HAL_LED2_TOGGLE()        hal_toggle_led(2)
+
+
+#define HAL_LED3_TOGGLE()        armm0_toggle_led(3)
 
 // delay loop - shall not release scheduler
 #define HAL_DELAY_LOOP_1S()      do {__delay_cycles(4000000);} while(0);

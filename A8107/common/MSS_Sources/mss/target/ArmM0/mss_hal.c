@@ -280,17 +280,17 @@ void MSS_TaskUseTimer(void)
 //						SLPTIMER_Initial(SLPTIMER1, (6533 - 6), 1, 1);	
 //						//SLPTIMER_StopTimer(SLPTIMER1);
 
-				
-						DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("\r\nWake up CPU: "));
-						RTC_PrintTime();		
-				
-						Delay1ms(1);
-						Set_TAG_Mili_SleepTime(2000);						
-				
-//						Delay100us(10);
-						EnterPM1();
-				
-		
+//				
+//						DEBUG_MESSAGE(FLAG_MF_SYSTEM, _T("\r\nWake up CPU: "));
+//						RTC_PrintTime();		
+//				
+//						Delay1ms(1);
+//						Set_TAG_Mili_SleepTime(2000);						
+//				
+////						Delay100us(10);
+//						EnterPM1();
+//				
+//		
 				
 //						Delay10us(50);
 //						EnterPM1();

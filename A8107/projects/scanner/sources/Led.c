@@ -214,7 +214,18 @@ void LedShowStatus()
 
 
 #if 1
-
+//==============================================================================
+// Function     : SetLed1
+// Purpose      : Turn LED on or off
+// Description	: Blink LED
+// Editor       : Richard Chung
+// Update Date	: 2018-04-17
+// -----------------------------------------------------------------------------
+// Parameters   : bool fOn
+//              :     Lights LED if true, otherwise goes off.
+// Return       : 
+// Remarks      : 
+//==============================================================================
 void SetLed1(bool fOn)
 {
 	if (fOn)
@@ -224,7 +235,7 @@ void SetLed1(bool fOn)
 }
 
 //==============================================================================
-// Function     : SetLed1
+// Function     : SetLed2
 // Purpose      : Turn LED on or off
 // Description	: Blink LED
 // Editor       : Richard Chung
@@ -244,9 +255,32 @@ void SetLed2(bool fOn)
 }
 
 
+
+//==============================================================================
+// Function     : SetLed3
+// Purpose      : Turn LED on or off
+// Description	: Blink LED
+// Editor       : Richard Chung
+// Update Date	: 2018-04-17
+// -----------------------------------------------------------------------------
+// Parameters   : bool fOn
+//              :     Lights LED if true, otherwise goes off.
+// Return       : 
+// Remarks      : 
+//==============================================================================
+void SetLed3(bool fOn)
+{
+	if (fOn)
+		GPIO_LED->DATAOUT_PIN.PIN_LED3_P = LED_INDICATOR_ON;  
+	else
+		GPIO_LED->DATAOUT_PIN.PIN_LED3_P = LED_INDICATOR_OFF; 
+}
+
+
+
 void armm0_toggle_led(uint8_t led)
 {
-	static uint8_t stled1=0,stled2=0;
+	static uint8_t stled1=0,stled2=0,stled3=0;
 	
   if(led == 1)
   {
@@ -257,6 +291,12 @@ void armm0_toggle_led(uint8_t led)
   else if(led == 2)
   {
 		stled2 = ~stled2;
+		printf("stled2=%x  ,",stled2);
+    SetLed2(stled2);
+  }
+	else if(led == 3)
+  {
+		stled3 = ~stled3;
 		printf("stled2=%x  ,",stled2);
     SetLed2(stled2);
   }

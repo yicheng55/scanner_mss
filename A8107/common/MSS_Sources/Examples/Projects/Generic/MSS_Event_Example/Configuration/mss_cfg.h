@@ -121,7 +121,7 @@
  *  automativally set to zero
  */
 #if (MSS_TASK_USE_TIMER == TRUE)
-  #define MSS_MAX_NUM_OF_TIMER           (2)
+  #define MSS_MAX_NUM_OF_TIMER           (5)
 #else
   #define MSS_MAX_NUM_OF_TIMER           (0)
 #endif

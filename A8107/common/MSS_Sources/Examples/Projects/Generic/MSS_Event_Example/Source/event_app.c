@@ -79,9 +79,10 @@ static mss_task_ctx_t ctx_state_2 = MSS_TASK_CTX_STATE_INIT_VAL;
 
 #define TASK_1_ID                       (0)
 #define TASK_2_ID                       (1)
+//#define LED_Disp_Task_ID           		  (3)
 
-#define LED_1_TOGGLE_MS                 (23)
-#define LED_2_TOGGLE_MS                 (77)
+#define LED_1_TOGGLE_MS                 (500)
+#define LED_2_TOGGLE_MS                 (1000)
 
 #define LED_1_TOGGLE_EVENT              (0x01)
 #define LED_2_TOGGLE_EVENT              (0x02)
@@ -95,6 +96,7 @@ static void init_tasks(void);
 //*****************************************************************************
 // External functions
 //*****************************************************************************
+extern void LED_Disp_Task_Init(void);
 
 /**************************************************************************//**
 *
@@ -235,5 +237,7 @@ static void init_tasks(void)
   APP_ASSERT(timer_hdl_toggle_led1 != MSS_TIMER_INVALID_HDL);
   timer_hdl_toggle_led2 = mss_timer_create(TASK_2_ID);
   APP_ASSERT(timer_hdl_toggle_led2 != MSS_TIMER_INVALID_HDL);
+	LED_Disp_Task_Init();
+	
 }
 

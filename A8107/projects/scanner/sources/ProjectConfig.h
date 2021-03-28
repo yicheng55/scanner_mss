@@ -94,7 +94,7 @@
 //------------------------------------------------------------------------------
 //--- Timing Trigger ---
 //------------------------------------------------------------------------------
-#define TIME_TIMING_TRIGGER				1			// Timing trigger (5ms)
+#define TIME_TIMING_TRIGGER				2			// Timing trigger (5ms)
 #define TIME_TIMING_SECOND_COUNT		(1000/TIME_TIMING_TRIGGER)		// 1 Second
 #define TIME_TIMING_MINUTE_COUNT		(60*TIME_TIMING_SECOND_COUNT)	// 1 Minute
 #define TIME_TIMING_HOUR_COUNT			(60*TIME_TIMING_MINUTE_COUNT)	// 1 Hour
