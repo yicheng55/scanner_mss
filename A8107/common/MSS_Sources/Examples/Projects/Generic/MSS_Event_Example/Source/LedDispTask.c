@@ -65,13 +65,13 @@ void LED_Disp_Task(void *param)
 //#endif
 					if (LED_Disp_Task_tf == true) 
 						{
-							mss_timer_start(LED_Disp_tmr, MSS_TIMER_MS_TO_TICKS(1000));				  						
+							mss_timer_start(LED_Disp_tmr, MSS_TIMER_MS_TO_TICKS(2000));				  						
 							HAL_LED3_TOGGLE();			
 							LED_Disp_Task_tf	=	false;
 						}
 					else
 						{
-							mss_timer_start(LED_Disp_tmr, MSS_TIMER_MS_TO_TICKS(1000));				  						
+							mss_timer_start(LED_Disp_tmr, MSS_TIMER_MS_TO_TICKS(3000));				  						
 							HAL_LED3_TOGGLE();							
 							LED_Disp_Task_tf	=	true;
 						

@@ -269,7 +269,8 @@ void BoardInitGPIO()
 	
 	// LED GPIO
 	GPIO_PIN_OUTPUT(GPIO_LED, PIN_LED1);
-	GPIO_PIN_OUTPUT(GPIO_LED, PIN_LED2);		
+	GPIO_PIN_OUTPUT(GPIO_LED, PIN_LED2);	
+	GPIO_PIN_OUTPUT(GPIO_LED, PIN_LED3);			
 }
 
 //==============================================================================
