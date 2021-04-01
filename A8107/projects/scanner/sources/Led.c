@@ -297,8 +297,8 @@ void armm0_toggle_led(uint8_t led)
 	else if(led == 3)
   {
 		stled3 = ~stled3;
-		printf("stled2=%x  ,",stled2);
-    SetLed2(stled2);
+		printf("stled3=%x  ,",stled3);
+    SetLed3(stled3);
   }
 }
 

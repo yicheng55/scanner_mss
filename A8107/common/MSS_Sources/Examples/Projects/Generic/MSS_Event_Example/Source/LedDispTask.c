@@ -61,7 +61,7 @@ void LED_Disp_Task(void *param)
 	    if (mss_timer_check_expired(LED_Disp_tmr) == true)
 				{
 //#if (Printf_Debug_Viewer == true)	
-					printf("Execute LED_Disp_Task , Task no : %d\n", LED_Disp_Task_ID);
+					printf("Execute LED_Disp_Task , Task no : %d\r\n", LED_Disp_Task_ID);
 //#endif
 					if (LED_Disp_Task_tf == true) 
 						{

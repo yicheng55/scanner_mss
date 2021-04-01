@@ -81,7 +81,7 @@
  *  initialization value of MSS task ready bits. Each bit set represent the
  *  task which is ready to be executed right at the beginning.
  */
-#define MSS_READY_TASK_BITS_INIT         (0x0003)
+#define MSS_READY_TASK_BITS_INIT         (0x0007)			//?????=3
 
 /** MSS_PREEMPTIVE_SCHEDULING
  *  set to TRUE to activate preemptive scheduling, otherwise the scheduler
